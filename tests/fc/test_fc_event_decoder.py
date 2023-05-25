@@ -1,7 +1,7 @@
+import lgdo
 import numpy as np
 import pytest
 
-import lgdo
 from daq2lh5.fc.fc_event_decoder import FCEventDecoder
 from daq2lh5.raw_buffer import RawBuffer
 

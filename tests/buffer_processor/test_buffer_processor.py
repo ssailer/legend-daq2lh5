@@ -3,11 +3,11 @@ import os
 import sys
 from pathlib import Path
 
-import numpy as np
-
 import lgdo
+import numpy as np
 from dspeed import build_processing_chain as bpc
 from lgdo.compression import RadwareSigcompress, ULEB128ZigZagDiff
+
 from daq2lh5.build_raw import build_raw
 from daq2lh5.fc.fc_event_decoder import fc_decoded_values
 
@@ -29,16 +29,16 @@ def test_buffer_processor_packet_ids(lgnd_test_data, tmptestdir):
     with open(proc_out_spec) as f:
         proc_out_spec = json.load(f)
 
-    proc_out_spec["*"]["{name}"]["out_stream"] = proc_out_spec["*"]["{name}"]["out_stream"].replace(
-        "/tmp", f"{tmptestdir}"
-    )
+    proc_out_spec["*"]["{name}"]["out_stream"] = proc_out_spec["*"]["{name}"][
+        "out_stream"
+    ].replace("/tmp", f"{tmptestdir}")
 
     with open(raw_out_spec) as f:
         raw_out_spec = json.load(f)
 
-    raw_out_spec["*"]["{name}"]["out_stream"] = raw_out_spec["*"]["{name}"]["out_stream"].replace(
-        "/tmp", f"{tmptestdir}"
-    )
+    raw_out_spec["*"]["{name}"]["out_stream"] = raw_out_spec["*"]["{name}"][
+        "out_stream"
+    ].replace("/tmp", f"{tmptestdir}")
 
     build_raw(in_stream=daq_file, out_spec=proc_out_spec, overwrite=True)
     build_raw(in_stream=daq_file, out_spec=raw_out_spec, overwrite=True)

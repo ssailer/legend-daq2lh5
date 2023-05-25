@@ -7,6 +7,7 @@ import logging
 import numpy as np
 
 from ..data_streamer import DataStreamer
+from ..raw_buffer import RawBuffer, RawBufferLibrary
 from . import orca_packet
 from .orca_base import OrcaDecoder
 from .orca_digitizers import (  # noqa: F401
@@ -14,14 +15,13 @@ from .orca_digitizers import (  # noqa: F401
     ORSIS3316WaveformDecoder,
 )
 from .orca_flashcam import (  # noqa: F401;
-    ORFlashCamListenerStatusDecoder,
     ORFlashCamADCWaveformDecoder,
     ORFlashCamListenerConfigDecoder,
+    ORFlashCamListenerStatusDecoder,
     ORFlashCamWaveformDecoder,
 )
 from .orca_header_decoder import OrcaHeaderDecoder
 from .orca_run_decoder import ORRunDecoderForRun  # noqa: F401
-from ..raw_buffer import RawBuffer, RawBufferLibrary
 
 log = logging.getLogger(__name__)
 

@@ -7,9 +7,7 @@ import sys
 
 import numpy as np
 
-from . import __version__
-from . import logging
-from . import build_raw
+from . import __version__, build_raw, logging
 
 
 def daq2lh5_cli():
@@ -31,7 +29,9 @@ def daq2lh5_cli():
     )
 
     parser.add_argument(
-        "--version", action="store_true", help="""Print legend-daq2lh5 version and exit"""
+        "--version",
+        action="store_true",
+        help="""Print legend-daq2lh5 version and exit""",
     )
     parser.add_argument(
         "--verbose",

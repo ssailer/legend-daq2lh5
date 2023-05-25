@@ -3,9 +3,10 @@ from __future__ import annotations
 import logging
 
 import lgdo
-from .compass_config_parser import compass_config_to_struct
+
 from ..data_decoder import DataDecoder
 from ..raw_buffer import RawBuffer
+from .compass_config_parser import compass_config_to_struct
 
 log = logging.getLogger(__name__)
 
