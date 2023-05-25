@@ -8,7 +8,7 @@ from pkg_resources import get_distribution
 sys.path.insert(0, Path(__file__).parents[2].resolve().as_posix())
 
 project = "legend-daq2lh5"
-copyright = "Copyright Holder"
+copyright = "2023, the LEGEND Collaboration"
 version = get_distribution("legend-daq2lh5").version
 
 extensions = [
@@ -18,6 +18,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
+    "sphinx_inline_tabs",
     "myst_parser",
 ]
 
@@ -36,24 +37,23 @@ html_theme_options = {
 }
 html_title = f"{project} {version}"
 
-autodoc_default_options = {"ignore-module-all": True}
-
 # sphinx-napoleon
 # enforce consistent usage of NumPy-style docstrings
 napoleon_numpy_docstring = True
 napoleon_google_docstring = False
 napoleon_use_ivar = True
+napoleon_use_rtype = False
 
 # intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("http://docs.scipy.org/doc/numpy", None),
-    "scipy": ("http://docs.scipy.org/doc/scipy/reference", None),
     "pandas": ("https://pandas.pydata.org/docs", None),
-    "matplotlib": ("http://matplotlib.org/stable", None),
+    "h5py": ("https://docs.h5py.org/en/stable", None),
 }  # add new intersphinx mappings here
 
 # sphinx-autodoc
+autodoc_default_options = {"ignore-module-all": True}
 # Include __init__() docstring in class docstring
 autoclass_content = "both"
 autodoc_typehints = "both"
