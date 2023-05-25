@@ -32,7 +32,7 @@ class DataDecoder:
 
     For example ::
 
-      from pygama.lgdo.compression import RadwareSigcompress
+      from lgdo.compression import RadwareSigcompress
 
       FCEventDecoder.decoded_values = {
         "packet_id": {"dtype": "uint32", "compression": "gzip"},

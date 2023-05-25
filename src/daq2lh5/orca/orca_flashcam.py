@@ -458,7 +458,7 @@ class ORFlashCamWaveformDecoder(OrcaDecoder):
     def __init__(self, header: OrcaHeader = None, **kwargs) -> None:
         # start with the values defined in fcdaq
         self.decoded_values_template = copy.deepcopy(fc_decoded_values)
-        """A custom copy of :obj:`.raw.fc.fc_event_decoder.fc_decoded_values`."""
+        """A custom copy of :obj:`.fc.fc_event_decoder.fc_decoded_values`."""
         # add header values from Orca
         self.decoded_values_template.update(
             {

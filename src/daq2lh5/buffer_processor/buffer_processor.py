@@ -66,7 +66,7 @@ def buffer_processor(rb: RawBuffer) -> Table:
     request! All updates are done on the `tmp_table`, which shares the fields
     with `rb.lgdo` and are done in place. The `tmp_table` is necessary so that
     the `rb.lgdo` keeps arrays needed by the table in the buffer.  An example
-    `proc_spec` in an :func:`~.raw.build_raw.build_raw` `out_spec` is below. ::
+    `proc_spec` in an :func:`~.build_raw.build_raw` `out_spec` is below. ::
 
         {
           "FCEventDecoder" : {
@@ -80,7 +80,7 @@ def buffer_processor(rb: RawBuffer) -> Table:
                   "processors": {
                     "presummed_waveform": {
                       "function": "presum",
-                      "module": "pygama.dsp.processors",
+                      "module": "dspeed.processors",
                       "args": [
                         "waveform",
                         "presummed_waveform(shape=len(waveform)//16, period=waveform.period*16, offset=waveform.offset, 'f')"
@@ -89,7 +89,7 @@ def buffer_processor(rb: RawBuffer) -> Table:
                     },
                     "t_sat_lo, t_sat_hi": {
                       "function": "saturation",
-                      "module": "pygama.dsp.processors",
+                      "module": "dspeed.processors",
                       "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                       "unit": "ADC"
                     }
@@ -290,7 +290,7 @@ def process_dsp(rb: RawBuffer, tmp_table: Table) -> None:
         a :class:`.RawBuffer` that contains a `proc_spec` and an `lgdo`
         attribute.
     tmp_table
-        a :class:`pygama.lgdo.Table` that is temporarily created to be written
+        a :class:`lgdo.Table` that is temporarily created to be written
         to the raw file.
 
     Notes

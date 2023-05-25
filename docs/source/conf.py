@@ -43,6 +43,7 @@ napoleon_numpy_docstring = True
 napoleon_google_docstring = False
 napoleon_use_ivar = True
 napoleon_use_rtype = False
+napoleon_custom_sections = ["JSON Configuration Example"]
 
 # intersphinx
 intersphinx_mapping = {
@@ -50,6 +51,8 @@ intersphinx_mapping = {
     "numpy": ("http://docs.scipy.org/doc/numpy", None),
     "pandas": ("https://pandas.pydata.org/docs", None),
     "h5py": ("https://docs.h5py.org/en/stable", None),
+    "lgdo": ("https://legend-pydataobj.readthedocs.io/en/stable", None),
+    "dspeed": ("https://dspeed.readthedocs.io/en/stable", None),
 }  # add new intersphinx mappings here
 
 # sphinx-autodoc

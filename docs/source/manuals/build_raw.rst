@@ -2,10 +2,10 @@ Decoding digitizer data
 =======================
 
 The primary function for data conversion into raw-tier LH5 files is
-:func:`.raw.build_raw.build_raw`. This is a one-to many function: one input DAQ
+:func:`.build_raw.build_raw`. This is a one-to many function: one input DAQ
 file can generate one or more output raw files. Control of which data ends up
 in which files, and in which HDF5 groups inside of each file, is controlled via
-:mod:`.raw.raw_buffer`.
+:mod:`.raw_buffer`.
 
 Currently we support the following DAQ data formats:
 
@@ -24,13 +24,13 @@ Configuration
 
 Basic usage of |build_raw| requires zero configuration: ::
 
-    from pygama.raw import build_raw
+    from daq2lh5 import build_raw
     build_raw("daq-data.ext", out_spec="raw-data.lh5")
 
-pygama will autodetect the DAQ format (if not, the *in_stream_type* is your
+daq2lh5 will autodetect the DAQ format (if not, the *in_stream_type* is your
 friend), decode all the data it can and save it to an LH5 file named
-``raw-data.lh5``. The data in the output file is organized by record types (e.g.
-event stream, DAQ hardware status, configuration, etc.)
+``raw-data.lh5``. The data in the output file is organized by record types
+(e.g.  event stream, DAQ hardware status, configuration, etc.)
 
 .. tip::
    Check the |build_raw| documentation for a full list of useful options.
@@ -38,11 +38,11 @@ event stream, DAQ hardware status, configuration, etc.)
 When the *out_spec* argument is a dictionary or a string ending with ``.json``,
 it is interpreted as a configuration dictionary or a JSON file containing it,
 respectively. Technically, this dictionary configures a
-:class:`~.raw.raw_buffer.RawBufferLibrary`.
+:class:`~.raw_buffer.RawBufferLibrary`.
 
 .. tip::
    The full configuration format specification is documented in depth in
-   :meth:`.raw.raw_buffer.RawBufferLibrary.set_from_json_dict`.
+   :meth:`.raw_buffer.RawBufferLibrary.set_from_json_dict`.
 
 Let's use the following configuration file as an example:
 
@@ -76,14 +76,14 @@ Let's use the following configuration file as an example:
     }
 
 The first-level keys specify the names of the
-:class:`~.raw.data_decoder.DataDecoder`-derived classes to be used in the
+:class:`~.data_decoder.DataDecoder`-derived classes to be used in the
 decoding. In the example above,
-:class:`~.raw.orca.orca_flashcam.ORFlashCamWaveformDecoder` and
-:class:`~.raw.orca.orca_flashcam.OrcaHeaderDecoder`. The user can also use just
-``*``, which matches any other decoder known to pygama.
+:class:`~.orca.orca_flashcam.ORFlashCamWaveformDecoder` and
+:class:`~.orca.orca_header_decoder.OrcaHeaderDecoder`. The user can also use just
+``*``, which matches any other decoder known to legend-daq2lh5.
 
 The second-level dictionary keys are the names used to label the decoded
-objects (:class:`~.raw.raw_buffer.RawBuffer`\ s) in the output file. These
+objects (:class:`~.raw_buffer.RawBuffer`\ s) in the output file. These
 string can include `format specifiers
 <https://docs.python.org/3/library/string.html#format-string-syntax>`_ for
 variable expansion (see next section). The first key in
@@ -174,24 +174,23 @@ Data post-processing
 Command line interface
 ----------------------
 
-A command line interface to |build_raw| is available through the ``pygama``
-executable via the ``build-raw`` sub-command. This can be used to quickly
-convert digitizer data without custom scripting. Here are some examples of what
-can be achieved:
+A command line interface to |build_raw| is available through the
+``legend-daq2lh5`` executable. This can be used to quickly convert digitizer
+data without custom scripting. Here are some examples of what can be achieved:
 
 .. code-block:: console
 
-    $ pygama build-raw --help  # display usage and exit
+    $ legend-daq2lh5 --help  # display usage and exit
 
 Convert files and save them in the original directory with the same filenames
 (but new extension ``.lh5``):
 
 .. code-block:: console
 
-    $ pygama [-v] build-raw data/*.orca  # increase verbosity with -v
-    $ pygama build-raw --overwrite data/*.orca  # overwrite output files
+    $ legend-daq2lh5 [-v] data/*.orca  # increase verbosity with -v
+    $ legend-daq2lh5 --overwrite data/*.orca  # overwrite output files
     $ # set maximum number of rows to be considered from each file
-    $ pygama build-raw --max-rows 100 data/*.orca
+    $ legend-daq2lh5 --max-rows 100 data/*.orca
 
 Customize the group layout of the LH5 files in a JSON configuration file (see
 above section):
@@ -212,7 +211,7 @@ and pass it to the command line:
 
 .. code-block:: console
 
-    $ pygama build-raw --out-spec fcio-config.json data/*.fcio
+    $ legend-daq2lh5 --out-spec fcio-config.json data/*.fcio
 
 .. note::
    A special keyword ``orig_basename`` is automatically replaced in the JSON
@@ -222,7 +221,7 @@ and pass it to the command line:
    through the command line.
 
 .. seealso::
-   See |build_raw| and ``pygama build-raw --help`` for a full list of
+   See |build_raw| and ``legend-daq2lh5 --help`` for a full list of
    conversion options.
 
-.. |build_raw| replace:: :func:`~.raw.build_raw.build_raw`
+.. |build_raw| replace:: :func:`~.build_raw.build_raw`

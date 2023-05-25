@@ -48,7 +48,7 @@ class FCStreamer(DataStreamer):
         """Initialize the FlashCam data stream.
 
         Refer to the documentation for
-        :meth:`.raw.data_streamer.DataStreamer.open_stream` for a description
+        :meth:`.data_streamer.DataStreamer.open_stream` for a description
         of the parameters.
 
         Returns

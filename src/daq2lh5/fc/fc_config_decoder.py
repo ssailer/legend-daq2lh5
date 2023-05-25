@@ -17,19 +17,19 @@ class FCConfigDecoder(DataDecoder):
 
     Note
     ----
-    Derives from :class:`~.raw.data_decoder.DataDecoder` in anticipation of
+    Derives from :class:`~.data_decoder.DataDecoder` in anticipation of
     possible future functionality. Currently the base class interface is not
     used.
 
     Example
     -------
     >>> import fcutils
-    >>> from pygama.raw.fc.fc_config_decoder import FCConfigDecoder
+    >>> from daq2lh5.fc.fc_config_decoder import FCConfigDecoder
     >>> fc = fcutils.fcio('file.fcio')
     >>> decoder = FCConfigDecoder()
     >>> config = decoder.decode_config(fc)
     >>> type(config)
-    pygama.lgdo.struct.Struct
+    lgdo.struct.Struct
     """
 
     def __init__(self, *args, **kwargs) -> None:

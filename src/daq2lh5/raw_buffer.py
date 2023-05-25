@@ -8,16 +8,16 @@ Primary Classes
 :class:`.RawBuffer`: an LGDO (e.g. a table) along with buffer metadata, such as the
 current write location, the list of keys (e.g. channels) that write to it, the
 output stream it is associated with (if any), etc. Each
-:class:`~.raw.data_decoder.DataDecoder` is associated with a
+:class:`~.data_decoder.DataDecoder` is associated with a
 :class:`.RawBuffer` of a particular format.
 
 :class:`.RawBufferList`: a collection of :class:`RawBuffer` with LGDO's that
 all have the same structure (same type, same fields, etc., but the fields can
-have different shape). A :class:`~.raw.data_decoder.DataDecoder` will write its
+have different shape). A :class:`~.data_decoder.DataDecoder` will write its
 output to a :class:`.RawBufferList`.
 
 :class:`.RawBufferLibrary`: a dictionary of :class:`RawBufferList`\ s, e.g. one
-for each :class:`~.raw.data_decoder.DataDecoder`. Keyed by the decoder name.
+for each :class:`~.data_decoder.DataDecoder`. Keyed by the decoder name.
 
 :class:`.RawBuffer` supports a JSON short-hand notation, see
 :meth:`.RawBufferLibrary.set_from_json_dict` for full specification.

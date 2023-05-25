@@ -35,12 +35,12 @@ def lh5_buffer_processor(
     Parameters
     ----------
     lh5_raw_file_in
-        the path of a file created by :func:`~.raw.build_raw.build_raw`.
+        the path of a file created by :func:`~.build_raw.build_raw`.
     overwrite
         sets whether to overwrite the output file(s) if it (they) already
         exist.
     out_spec
-        an `out_spec` for :func:`~.raw.build_raw.build_raw` also containing a
+        an `out_spec` for :func:`~.build_raw.build_raw` also containing a
         dictionary named `proc_spec` used for data processing.  See
         :func:`.buffer_processor` for an example of such an `out_spec`.
     proc_file_name
