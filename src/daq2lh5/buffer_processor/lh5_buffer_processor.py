@@ -5,9 +5,9 @@ import logging
 import os
 
 import h5py
-
 import lgdo
 from lgdo import LH5Store
+
 from ..buffer_processor.buffer_processor import buffer_processor
 from ..raw_buffer import RawBuffer, RawBufferLibrary
 

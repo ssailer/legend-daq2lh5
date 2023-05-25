@@ -1,6 +1,6 @@
+import lgdo
 import pytest
 
-import lgdo
 from daq2lh5.orca.orca_run_decoder import ORRunDecoderForRun
 from daq2lh5.raw_buffer import RawBuffer
 

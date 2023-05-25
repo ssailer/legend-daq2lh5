@@ -3,10 +3,10 @@ import os
 import sys
 from pathlib import Path
 
-import numpy as np
-
 import lgdo
+import numpy as np
 from dspeed import build_processing_chain as bpc
+
 from daq2lh5.buffer_processor.lh5_buffer_processor import lh5_buffer_processor
 from daq2lh5.build_raw import build_raw
 from daq2lh5.fc.fc_event_decoder import fc_decoded_values

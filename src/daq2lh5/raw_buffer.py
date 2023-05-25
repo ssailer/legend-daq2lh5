@@ -69,6 +69,7 @@ from typing import Union
 
 import lgdo
 from lgdo import LH5Store
+
 from .buffer_processor.buffer_processor import buffer_processor
 
 LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]

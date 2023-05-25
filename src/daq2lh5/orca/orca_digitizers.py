@@ -5,10 +5,10 @@ from typing import Any
 
 import numpy as np
 
+from ..raw_buffer import RawBufferLibrary
 from .orca_base import OrcaDecoder, get_ccc
 from .orca_header import OrcaHeader
 from .orca_packet import OrcaPacket
-from ..raw_buffer import RawBufferLibrary
 
 log = logging.getLogger(__name__)
 

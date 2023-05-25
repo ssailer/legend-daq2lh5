@@ -6,6 +6,7 @@ from collections import Counter
 from io import BytesIO
 
 from lgdo import LH5Store
+
 from daq2lh5 import build_raw
 from daq2lh5.orca import orca_streamer
 from daq2lh5.orca.orca_flashcam import ORFlashCamListenerConfigDecoder

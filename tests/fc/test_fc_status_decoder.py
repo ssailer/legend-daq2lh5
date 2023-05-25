@@ -1,8 +1,8 @@
+import lgdo
 import numpy as np
 import pytest
 from pytest import approx
 
-import lgdo
 from daq2lh5.fc.fc_status_decoder import FCStatusDecoder
 from daq2lh5.raw_buffer import RawBuffer
 

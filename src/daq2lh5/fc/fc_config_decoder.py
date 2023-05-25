@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 
 import fcutils
+import lgdo
 import numpy as np
 
-import lgdo
 from ..data_decoder import DataDecoder
 from ..raw_buffer import RawBuffer
 

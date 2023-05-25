@@ -3,9 +3,9 @@ from __future__ import annotations
 import copy
 import logging
 
+import lgdo
 import numpy as np
 
-import lgdo
 from ..data_decoder import DataDecoder
 
 log = logging.getLogger(__name__)
