@@ -5,8 +5,8 @@ import logging
 from typing import Any
 
 import fcutils
-
 import lgdo
+
 from ..data_decoder import DataDecoder
 
 log = logging.getLogger(__name__)

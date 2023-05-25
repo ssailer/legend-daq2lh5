@@ -5,10 +5,10 @@ from __future__ import annotations
 
 from typing import Union
 
-import numpy as np
-
 import lgdo
+import numpy as np
 from lgdo import LH5Store
+
 from .raw_buffer import RawBuffer
 
 LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]

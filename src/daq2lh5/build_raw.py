@@ -7,11 +7,10 @@ import os
 import time
 
 import hdf5plugin
-import numpy as np
-from tqdm.auto import tqdm
-
 import lgdo
+import numpy as np
 from lgdo.lh5_store import DEFAULT_HDF5_COMPRESSION
+from tqdm.auto import tqdm
 
 from .compass.compass_streamer import CompassStreamer
 from .fc.fc_streamer import FCStreamer
@@ -281,12 +280,12 @@ def build_raw(
     log.info(f"conversion speed: {sizeof_fmt(streamer.n_bytes_read/elapsed)}ps")
 
 
-def sizeof_fmt(num, suffix='B'):
+def sizeof_fmt(num, suffix="B"):
     """
     given a file size in bytes, output a human-readable form.
     """
-    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(num) < 1024.0:
             return f"{num:.3f} {unit}{suffix}"
         num /= 1024.0
-    return "{:.1f} {} {}".format(num, 'Y', suffix)
+    return "{:.1f} {} {}".format(num, "Y", suffix)

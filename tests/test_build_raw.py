@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 import pytest
-
 from lgdo.lh5_store import LH5Store, ls
+
 from daq2lh5 import build_raw
 
 config_dir = Path(__file__).parent / "configs"
@@ -61,9 +61,9 @@ def test_build_raw_fc_out_spec(lgnd_test_data, tmptestdir):
     with open(f"{config_dir}/fc-out-spec.json") as f:
         out_spec = json.load(f)
 
-    out_spec["FCEventDecoder"]["spms"]["out_stream"] = out_spec["FCEventDecoder"]["spms"]["out_stream"].replace(
-        "/tmp", f"{tmptestdir}"
-    )
+    out_spec["FCEventDecoder"]["spms"]["out_stream"] = out_spec["FCEventDecoder"][
+        "spms"
+    ]["out_stream"].replace("/tmp", f"{tmptestdir}")
 
     build_raw(
         in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio"),
@@ -138,9 +138,9 @@ def test_build_raw_orca_out_spec(lgnd_test_data, tmptestdir):
     with open(f"{config_dir}/orca-out-spec.json") as f:
         out_spec = json.load(f)
 
-    out_spec["ORFlashCamADCWaveformDecoder"]["geds"]["out_stream"] = out_spec["ORFlashCamADCWaveformDecoder"]["geds"]["out_stream"].replace(
-        "/tmp", f"{tmptestdir}"
-    )
+    out_spec["ORFlashCamADCWaveformDecoder"]["geds"]["out_stream"] = out_spec[
+        "ORFlashCamADCWaveformDecoder"
+    ]["geds"]["out_stream"].replace("/tmp", f"{tmptestdir}")
 
     build_raw(
         in_stream=lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca"),

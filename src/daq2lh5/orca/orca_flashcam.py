@@ -6,10 +6,10 @@ from typing import Any
 import numpy as np
 
 from ..fc.fc_event_decoder import fc_decoded_values
+from ..raw_buffer import RawBufferLibrary
 from .orca_base import OrcaDecoder
 from .orca_header import OrcaHeader
 from .orca_packet import OrcaPacket
-from ..raw_buffer import RawBufferLibrary
 
 log = logging.getLogger(__name__)
 

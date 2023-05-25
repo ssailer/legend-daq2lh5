@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import logging
 
+import lgdo
 import numpy as np
 import xmltodict
-
-import lgdo
 
 log = logging.getLogger(__name__)
 

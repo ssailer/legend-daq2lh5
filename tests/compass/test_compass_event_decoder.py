@@ -1,6 +1,6 @@
+import lgdo
 import pytest
 
-import lgdo
 from daq2lh5.compass.compass_event_decoder import CompassEventDecoder
 from daq2lh5.raw_buffer import RawBuffer
 

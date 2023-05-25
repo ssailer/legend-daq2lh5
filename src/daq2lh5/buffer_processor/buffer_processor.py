@@ -4,9 +4,8 @@ import copy
 import logging
 from typing import TYPE_CHECKING
 
-import numpy as np
-
 import lgdo
+import numpy as np
 from dspeed.errors import ProcessingChainError
 from dspeed.processing_chain import build_processing_chain as bpc
 from lgdo import Array, ArrayOfEqualSizedArrays, Table

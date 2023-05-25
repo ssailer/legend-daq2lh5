@@ -6,10 +6,10 @@ import fcutils
 
 from ..data_decoder import DataDecoder
 from ..data_streamer import DataStreamer
+from ..raw_buffer import RawBuffer, RawBufferLibrary
 from .fc_config_decoder import FCConfigDecoder
 from .fc_event_decoder import FCEventDecoder
 from .fc_status_decoder import FCStatusDecoder
-from ..raw_buffer import RawBuffer, RawBufferLibrary
 
 log = logging.getLogger(__name__)
 
