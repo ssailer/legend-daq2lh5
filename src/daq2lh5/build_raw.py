@@ -182,7 +182,7 @@ def build_raw(
     elif in_stream_type == "MGDO":
         raise NotImplementedError("MGDO streaming not yet implemented")
     else:
-        raise NotImplementedError("unknown input stream type {in_stream_type}")
+        raise NotImplementedError(f"unknown input stream type {in_stream_type}")
 
     # initialize the stream and read header. Also initializes rb_lib
     if log.getEffectiveLevel() <= logging.INFO:
