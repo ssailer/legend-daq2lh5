@@ -7,12 +7,10 @@ import os
 import time
 
 import hdf5plugin
+import lgdo
 import numpy as np
+from lgdo.lh5_store import DEFAULT_HDF5_COMPRESSION
 from tqdm.auto import tqdm
-
-from pygama import lgdo
-from pygama.lgdo.lh5_store import DEFAULT_HDF5_COMPRESSION
-from pygama.math.utils import sizeof_fmt
 
 from .compass.compass_streamer import CompassStreamer
 from .fc.fc_streamer import FCStreamer
@@ -184,7 +182,7 @@ def build_raw(
     elif in_stream_type == "MGDO":
         raise NotImplementedError("MGDO streaming not yet implemented")
     else:
-        raise NotImplementedError("unknown input stream type {in_stream_type}")
+        raise NotImplementedError(f"unknown input stream type {in_stream_type}")
 
     # initialize the stream and read header. Also initializes rb_lib
     if log.getEffectiveLevel() <= logging.INFO:
@@ -280,3 +278,14 @@ def build_raw(
     log.info(f"total converted: {sizeof_fmt(streamer.n_bytes_read)}")
     elapsed = time.time() - t_start
     log.info(f"conversion speed: {sizeof_fmt(streamer.n_bytes_read/elapsed)}ps")
+
+
+def sizeof_fmt(num, suffix="B"):
+    """
+    given a file size in bytes, output a human-readable form.
+    """
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
+        if abs(num) < 1024.0:
+            return f"{num:.3f} {unit}{suffix}"
+        num /= 1024.0
+    return "{:.1f} {} {}".format(num, "Y", suffix)

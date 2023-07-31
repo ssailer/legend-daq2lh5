@@ -1,8 +1,8 @@
+import lgdo
 import pytest
 
-from pygama import lgdo
-from pygama.raw.orca.orca_run_decoder import ORRunDecoderForRun
-from pygama.raw.raw_buffer import RawBuffer
+from daq2lh5.orca.orca_run_decoder import ORRunDecoderForRun
+from daq2lh5.raw_buffer import RawBuffer
 
 
 @pytest.fixture(scope="module")

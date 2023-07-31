@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import logging
 
-from pygama import lgdo
-from pygama.raw.compass.compass_config_parser import compass_config_to_struct
-from pygama.raw.data_decoder import DataDecoder
-from pygama.raw.raw_buffer import RawBuffer
+import lgdo
+
+from ..data_decoder import DataDecoder
+from ..raw_buffer import RawBuffer
+from .compass_config_parser import compass_config_to_struct
 
 log = logging.getLogger(__name__)
 

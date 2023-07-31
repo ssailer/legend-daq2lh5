@@ -18,6 +18,7 @@ Currently we support the following DAQ data formats:
   - `Struck SIS3316 <https://www.struck.de/sis3316.html>`_
 """
 
-from pygama.raw.build_raw import build_raw
+from ._version import version as __version__
+from .build_raw import build_raw
 
-__all__ = ["build_raw"]
+__all__ = ["build_raw", "__version__"]

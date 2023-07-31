@@ -1,8 +1,8 @@
-from pygama.raw.fc.fc_config_decoder import FCConfigDecoder
-from pygama.raw.fc.fc_event_decoder import FCEventDecoder
-from pygama.raw.fc.fc_status_decoder import FCStatusDecoder
-from pygama.raw.fc.fc_streamer import FCStreamer
-from pygama.raw.raw_buffer import RawBuffer, RawBufferList
+from daq2lh5.fc.fc_config_decoder import FCConfigDecoder
+from daq2lh5.fc.fc_event_decoder import FCEventDecoder
+from daq2lh5.fc.fc_status_decoder import FCStatusDecoder
+from daq2lh5.fc.fc_streamer import FCStreamer
+from daq2lh5.raw_buffer import RawBuffer, RawBufferList
 
 
 def test_get_decoder_list():

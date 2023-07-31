@@ -5,11 +5,12 @@ import struct
 from collections import Counter
 from io import BytesIO
 
-from pygama.lgdo import LH5Store
-from pygama.raw import build_raw
-from pygama.raw.orca import orca_streamer
-from pygama.raw.orca.orca_flashcam import ORFlashCamListenerConfigDecoder
-from pygama.raw.orca.orca_run_decoder import ORRunDecoderForRun
+from lgdo import LH5Store
+
+from daq2lh5 import build_raw
+from daq2lh5.orca import orca_streamer
+from daq2lh5.orca.orca_flashcam import ORFlashCamListenerConfigDecoder
+from daq2lh5.orca.orca_run_decoder import ORRunDecoderForRun
 
 
 class OrcaEncoder:
@@ -191,12 +192,12 @@ class OrcaEncoder:
         return packets
 
 
-def test_daq_to_raw(lgnd_test_data):
+def test_daq_to_raw(lgnd_test_data, tmptestdir):
     """Test function for the daq to raw validation."""
 
     # open orca daq file and create LH5 file
     orca_file = lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca")
-    out_spec = "/tmp/L200-comm-20220519-phy-geds_test.lh5"
+    out_spec = f"{tmptestdir}/L200-comm-20220519-phy-geds_test.lh5"
 
     build_raw(
         orca_file,

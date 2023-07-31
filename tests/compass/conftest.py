@@ -1,7 +1,7 @@
 import pytest
 
-from pygama.raw.compass.compass_header_decoder import CompassHeaderDecoder
-from pygama.raw.compass.compass_streamer import CompassStreamer
+from daq2lh5.compass.compass_header_decoder import CompassHeaderDecoder
+from daq2lh5.compass.compass_streamer import CompassStreamer
 
 
 @pytest.fixture(scope="module")

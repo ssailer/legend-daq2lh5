@@ -1,8 +1,8 @@
+import lgdo
 import pytest
 
-from pygama import lgdo
-from pygama.raw.compass.compass_event_decoder import CompassEventDecoder
-from pygama.raw.raw_buffer import RawBuffer
+from daq2lh5.compass.compass_event_decoder import CompassEventDecoder
+from daq2lh5.raw_buffer import RawBuffer
 
 
 @pytest.fixture(scope="module")

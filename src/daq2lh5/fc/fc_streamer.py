@@ -4,12 +4,12 @@ import logging
 
 import fcutils
 
-from pygama.raw.data_decoder import DataDecoder
-from pygama.raw.data_streamer import DataStreamer
-from pygama.raw.fc.fc_config_decoder import FCConfigDecoder
-from pygama.raw.fc.fc_event_decoder import FCEventDecoder
-from pygama.raw.fc.fc_status_decoder import FCStatusDecoder
-from pygama.raw.raw_buffer import RawBuffer, RawBufferLibrary
+from ..data_decoder import DataDecoder
+from ..data_streamer import DataStreamer
+from ..raw_buffer import RawBuffer, RawBufferLibrary
+from .fc_config_decoder import FCConfigDecoder
+from .fc_event_decoder import FCEventDecoder
+from .fc_status_decoder import FCStatusDecoder
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class FCStreamer(DataStreamer):
         """Initialize the FlashCam data stream.
 
         Refer to the documentation for
-        :meth:`.raw.data_streamer.DataStreamer.open_stream` for a description
+        :meth:`.data_streamer.DataStreamer.open_stream` for a description
         of the parameters.
 
         Returns

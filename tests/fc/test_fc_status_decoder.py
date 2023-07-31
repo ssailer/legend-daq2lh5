@@ -1,10 +1,10 @@
+import lgdo
 import numpy as np
 import pytest
 from pytest import approx
 
-from pygama import lgdo
-from pygama.raw.fc.fc_status_decoder import FCStatusDecoder
-from pygama.raw.raw_buffer import RawBuffer
+from daq2lh5.fc.fc_status_decoder import FCStatusDecoder
+from daq2lh5.raw_buffer import RawBuffer
 
 
 @pytest.fixture(scope="module")

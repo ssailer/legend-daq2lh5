@@ -10,7 +10,7 @@
           "processors": {
             "presum_rate, presummed_waveform": {
               "function": "presum",
-              "module": "pygama.dsp.processors",
+              "module": "dspeed.processors",
               "args": [
                 "waveform",
                 0,

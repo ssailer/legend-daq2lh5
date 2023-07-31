@@ -4,11 +4,12 @@ import json
 import logging
 import plistlib
 
-from pygama import lgdo
-from pygama.raw.orca.orca_base import OrcaDecoder
-from pygama.raw.orca.orca_header import OrcaHeader
-from pygama.raw.orca.orca_packet import OrcaPacket
-from pygama.raw.raw_buffer import RawBuffer, RawBufferLibrary
+import lgdo
+
+from ..raw_buffer import RawBuffer, RawBufferLibrary
+from .orca_base import OrcaDecoder
+from .orca_header import OrcaHeader
+from .orca_packet import OrcaPacket
 
 log = logging.getLogger(__name__)
 

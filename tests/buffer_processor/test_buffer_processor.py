@@ -3,13 +3,13 @@ import os
 import sys
 from pathlib import Path
 
+import lgdo
 import numpy as np
+from dspeed import build_processing_chain as bpc
+from lgdo.compression import RadwareSigcompress, ULEB128ZigZagDiff
 
-import pygama.lgdo as lgdo
-from pygama.dsp import build_processing_chain as bpc
-from pygama.lgdo.compression import RadwareSigcompress, ULEB128ZigZagDiff
-from pygama.raw.build_raw import build_raw
-from pygama.raw.fc.fc_event_decoder import fc_decoded_values
+from daq2lh5.build_raw import build_raw
+from daq2lh5.fc.fc_event_decoder import fc_decoded_values
 
 # skip compression in build_raw
 fc_decoded_values["waveform"].pop("compression", None)
@@ -18,18 +18,32 @@ config_dir = Path(__file__).parent / "test_buffer_processor_configs"
 
 
 # check that packet indexes match in verification test
-def test_buffer_processor_packet_ids(lgnd_test_data):
+def test_buffer_processor_packet_ids(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca")
     proc_out_spec = f"{config_dir}/buffer_processor_config.json"
     raw_out_spec = f"{config_dir}/raw_out_spec_no_proc.json"
 
-    processed_file = "/tmp/L200-comm-20220519-phy-geds_proc.lh5"
+    processed_file = f"{tmptestdir}/L200-comm-20220519-phy-geds_proc.lh5"
+
+    with open(proc_out_spec) as f:
+        proc_out_spec = json.load(f)
+
+    proc_out_spec["*"]["{name}"]["out_stream"] = proc_out_spec["*"]["{name}"][
+        "out_stream"
+    ].replace("/tmp", f"{tmptestdir}")
+
+    with open(raw_out_spec) as f:
+        raw_out_spec = json.load(f)
+
+    raw_out_spec["*"]["{name}"]["out_stream"] = raw_out_spec["*"]["{name}"][
+        "out_stream"
+    ].replace("/tmp", f"{tmptestdir}")
 
     build_raw(in_stream=daq_file, out_spec=proc_out_spec, overwrite=True)
     build_raw(in_stream=daq_file, out_spec=raw_out_spec, overwrite=True)
 
-    raw_file = "/tmp/L200-comm-20220519-phy-geds.lh5"
+    raw_file = f"{tmptestdir}/L200-comm-20220519-phy-geds.lh5"
 
     sto = lgdo.LH5Store()
 
@@ -49,15 +63,11 @@ def test_buffer_processor_packet_ids(lgnd_test_data):
 
 
 # check that packet indexes match in verification test
-def test_buffer_processor_waveform_lengths(lgnd_test_data):
+def test_buffer_processor_waveform_lengths(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
-    processed_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", "L200-comm-20211130-phy-spms_proc.lh5"
-    )
-    raw_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", "L200-comm-20211130-phy-spms.lh5"
-    )
+    processed_file = f"{tmptestdir}/L200-comm-20211130-phy-spms_proc.lh5"
+    raw_file = f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5"
 
     out_spec = {
         "FCEventDecoder": {
@@ -72,7 +82,7 @@ def test_buffer_processor_waveform_lengths(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -215,13 +225,11 @@ def test_buffer_processor_waveform_lengths(lgnd_test_data):
         assert presum_rate_from_file.nda[0] == presum_rate
 
 
-def test_buffer_processor_file_size_decrease(lgnd_test_data):
+def test_buffer_processor_file_size_decrease(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("orca/sis3316/coherent-run1141-bkg.orca")
-    processed_file = daq_file.replace(
-        "coherent-run1141-bkg.orca", "coherent-run1141-bkg_proc.lh5"
-    )
-    raw_file = daq_file.replace("coherent-run1141-bkg.orca", "coherent-run1141-bkg.lh5")
+    processed_file = f"{tmptestdir}/coherent-run1141-bkg_proc.lh5"
+    raw_file = f"{tmptestdir}/coherent-run1141-bkg.lh5"
 
     raw_out_spec = {
         "ORSIS3316WaveformDecoder": {
@@ -242,7 +250,7 @@ def test_buffer_processor_file_size_decrease(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -286,15 +294,11 @@ def test_buffer_processor_file_size_decrease(lgnd_test_data):
 
 
 # check that packet indexes match in verification test on file that has both spms and geds
-def test_buffer_processor_separate_name_tables(lgnd_test_data):
+def test_buffer_processor_separate_name_tables(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
-    processed_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", "L200-comm-fake-geds-and-spms_proc.lh5"
-    )
-    raw_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", "L200-comm-fake-geds-and-spms.lh5"
-    )
+    processed_file = f"{tmptestdir}/L200-comm-fake-geds-and-spms_proc.lh5"
+    raw_file = f"{tmptestdir}/L200-comm-fake-geds-and-spms.lh5"
 
     out_spec = {
         "FCEventDecoder": {
@@ -309,7 +313,7 @@ def test_buffer_processor_separate_name_tables(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -338,7 +342,7 @@ def test_buffer_processor_separate_name_tables(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -490,15 +494,11 @@ def test_buffer_processor_separate_name_tables(lgnd_test_data):
         assert presum_rate_from_file.nda[0] == presum_rate
 
 
-def test_proc_geds_no_proc_spms(lgnd_test_data):
+def test_proc_geds_no_proc_spms(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
-    processed_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", "L200-comm-test-pass_proc.lh5"
-    )
-    raw_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", "L200-comm-test-pass.lh5"
-    )
+    processed_file = f"{tmptestdir}/L200-comm-test-pass_proc.lh5"
+    raw_file = f"{tmptestdir}/L200-comm-test-pass.lh5"
 
     out_spec = {
         "FCEventDecoder": {
@@ -518,7 +518,7 @@ def test_proc_geds_no_proc_spms(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -529,7 +529,7 @@ def test_proc_geds_no_proc_spms(lgnd_test_data):
                             },
                             "t_sat_lo, t_sat_hi": {
                                 "function": "saturation",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                                 "unit": "ADC",
                             },
@@ -573,7 +573,7 @@ def test_proc_geds_no_proc_spms(lgnd_test_data):
         "processors": {
             "t_sat_lo, t_sat_hi": {
                 "function": "saturation",
-                "module": "pygama.dsp.processors",
+                "module": "dspeed.processors",
                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                 "unit": "ADC"
                 }
@@ -749,16 +749,11 @@ def test_proc_geds_no_proc_spms(lgnd_test_data):
 
 
 # check that packet indexes match in verification test
-def test_buffer_processor_multiple_keys(lgnd_test_data):
+def test_buffer_processor_multiple_keys(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca")
-    processed_file = daq_file.replace(
-        "L200-comm-20220519-phy-geds.orca",
-        "L200-comm-20220519-phy-geds-key-test_proc.lh5",
-    )
-    raw_file = daq_file.replace(
-        "L200-comm-20220519-phy-geds.orca", "L200-comm-20220519-phy-geds-key-test.lh5"
-    )
+    processed_file = f"{tmptestdir}/L200-comm-20220519-phy-geds-key-test_proc.lh5"
+    raw_file = f"{tmptestdir}/L200-comm-20220519-phy-geds-key-test.lh5"
 
     out_spec = {
         "ORFlashCamADCWaveformDecoder": {
@@ -778,7 +773,7 @@ def test_buffer_processor_multiple_keys(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -789,7 +784,7 @@ def test_buffer_processor_multiple_keys(lgnd_test_data):
                             },
                             "t_sat_lo, t_sat_hi": {
                                 "function": "saturation",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                                 "unit": "ADC",
                             },
@@ -833,7 +828,7 @@ def test_buffer_processor_multiple_keys(lgnd_test_data):
         "processors": {
             "t_sat_lo, t_sat_hi": {
                 "function": "saturation",
-                "module": "pygama.dsp.processors",
+                "module": "dspeed.processors",
                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                 "unit": "ADC"
                 }
@@ -1037,18 +1032,12 @@ def test_buffer_processor_multiple_keys(lgnd_test_data):
             assert proc_sat_lo.dtype == np.uint16
 
 
-def test_buffer_processor_all_pass(lgnd_test_data):
+def test_buffer_processor_all_pass(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca")
 
-    raw_file = daq_file.replace(
-        "L200-comm-20220519-phy-geds.orca", "L200-comm-20220519-phy-geds-all-pass.lh5"
-    )
-
-    processed_file = daq_file.replace(
-        "L200-comm-20220519-phy-geds.orca",
-        "L200-comm-20220519-phy-geds-all-pass_proc.lh5",
-    )
+    raw_file = f"{tmptestdir}/L200-comm-20220519-phy-geds-all-pass.lh5"
+    processed_file = f"{tmptestdir}/L200-comm-20220519-phy-geds-all-pass_proc.lh5"
 
     proc_out_spec = {
         "*": {
@@ -1096,16 +1085,11 @@ def test_buffer_processor_all_pass(lgnd_test_data):
 
 
 # check that packet indexes match in verification test
-def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data):
+def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca")
-    processed_file = daq_file.replace(
-        "L200-comm-20220519-phy-geds.orca",
-        "L200-comm-20220519-phy-geds-key-test_proc.lh5",
-    )
-    raw_file = daq_file.replace(
-        "L200-comm-20220519-phy-geds.orca", "L200-comm-20220519-phy-geds-key-test.lh5"
-    )
+    processed_file = f"{tmptestdir}/L200-comm-20220519-phy-geds-key-test_proc.lh5"
+    raw_file = f"{tmptestdir}/L200-comm-20220519-phy-geds-key-test.lh5"
 
     out_spec = {
         "ORFlashCamADCWaveformDecoder": {
@@ -1125,7 +1109,7 @@ def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -1136,7 +1120,7 @@ def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data):
                             },
                             "t_sat_lo, t_sat_hi": {
                                 "function": "saturation",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                                 "unit": "ADC",
                             },
@@ -1180,7 +1164,7 @@ def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data):
         "processors": {
             "t_sat_lo, t_sat_hi": {
                 "function": "saturation",
-                "module": "pygama.dsp.processors",
+                "module": "dspeed.processors",
                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                 "unit": "ADC"
                 }
@@ -1385,10 +1369,10 @@ def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data):
 
 
 # check that packet indexes match in verification test
-def test_buffer_processor_compression_settings(lgnd_test_data):
+def test_buffer_processor_compression_settings(lgnd_test_data, tmptestdir):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
-    processed_file = "/tmp/L200-comm-20220519-phy-geds_proc_comp.lh5"
+    processed_file = f"{tmptestdir}/L200-comm-20220519-phy-geds_proc_comp.lh5"
 
     out_spec = {
         "FCEventDecoder": {
@@ -1403,7 +1387,7 @@ def test_buffer_processor_compression_settings(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,

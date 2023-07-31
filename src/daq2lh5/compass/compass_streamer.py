@@ -4,11 +4,11 @@ import logging
 
 import numpy as np
 
-from pygama.raw.compass.compass_event_decoder import CompassEventDecoder
-from pygama.raw.compass.compass_header_decoder import CompassHeaderDecoder
-from pygama.raw.data_decoder import DataDecoder
-from pygama.raw.data_streamer import DataStreamer
-from pygama.raw.raw_buffer import RawBuffer, RawBufferLibrary
+from ..data_decoder import DataDecoder
+from ..data_streamer import DataStreamer
+from ..raw_buffer import RawBuffer, RawBufferLibrary
+from .compass_event_decoder import CompassEventDecoder
+from .compass_header_decoder import CompassHeaderDecoder
 
 log = logging.getLogger(__name__)
 

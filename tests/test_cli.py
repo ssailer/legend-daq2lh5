@@ -5,12 +5,11 @@ from pathlib import Path
 config_dir = Path(__file__).parent / "configs"
 
 
-def test_build_raw_cli(lgnd_test_data):
-    subprocess.check_call(["pygama", "build-raw", "--help"])
+def test_build_raw_cli(lgnd_test_data, tmptestdir):
+    subprocess.check_call(["legend-daq2lh5", "--help"])
     subprocess.check_call(
         [
-            "pygama",
-            "build-raw",
+            "legend-daq2lh5",
             "--overwrite",
             "--stream-type",
             "ORCA",
@@ -25,3 +24,4 @@ def test_build_raw_cli(lgnd_test_data):
     )
 
     assert os.path.exists("/tmp/L200-comm-20220519-phy-geds.lh5")
+    os.remove("/tmp/L200-comm-20220519-phy-geds.lh5")

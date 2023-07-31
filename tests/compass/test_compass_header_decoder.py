@@ -1,6 +1,5 @@
 import numpy as np
-
-from pygama.lgdo import Scalar
+from lgdo import Scalar
 
 
 def test_decoding(compass_config):

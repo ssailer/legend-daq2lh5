@@ -1,5 +1,5 @@
-from pygama.raw.compass.compass_streamer import CompassStreamer
-from pygama.raw.raw_buffer import RawBuffer, RawBufferList
+from daq2lh5.compass.compass_streamer import CompassStreamer
+from daq2lh5.raw_buffer import RawBuffer, RawBufferList
 
 
 def test_default_rb_lib(lgnd_test_data):

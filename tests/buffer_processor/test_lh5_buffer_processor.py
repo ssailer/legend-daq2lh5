@@ -3,13 +3,13 @@ import os
 import sys
 from pathlib import Path
 
+import lgdo
 import numpy as np
+from dspeed import build_processing_chain as bpc
 
-import pygama.lgdo as lgdo
-from pygama.dsp import build_processing_chain as bpc
-from pygama.raw.buffer_processor.lh5_buffer_processor import lh5_buffer_processor
-from pygama.raw.build_raw import build_raw
-from pygama.raw.fc.fc_event_decoder import fc_decoded_values
+from daq2lh5.buffer_processor.lh5_buffer_processor import lh5_buffer_processor
+from daq2lh5.build_raw import build_raw
+from daq2lh5.fc.fc_event_decoder import fc_decoded_values
 
 # skip compression in build_raw
 fc_decoded_values["waveform"].pop("compression", None)
@@ -75,7 +75,7 @@ def test_lh5_buffer_processor_waveform_lengths(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -234,7 +234,7 @@ def test_lh5_buffer_processor_file_size_decrease(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -342,7 +342,7 @@ def test_lh5_buffer_processor_separate_name_tables(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -370,7 +370,7 @@ def test_lh5_buffer_processor_separate_name_tables(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -542,7 +542,7 @@ def test_raw_geds_no_proc_spms(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -553,7 +553,7 @@ def test_raw_geds_no_proc_spms(lgnd_test_data):
                             },
                             "t_sat_lo, t_sat_hi": {
                                 "function": "saturation",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                                 "unit": "ADC",
                             },
@@ -581,7 +581,7 @@ def test_raw_geds_no_proc_spms(lgnd_test_data):
         "processors": {
             "t_sat_lo, t_sat_hi": {
                 "function": "saturation",
-                "module": "pygama.dsp.processors",
+                "module": "dspeed.processors",
                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                 "unit": "ADC"
                 }
@@ -775,7 +775,7 @@ def test_lh5_buffer_processor_multiple_keys(lgnd_test_data):
                         "processors": {
                             "presum_rate, presummed_waveform": {
                                 "function": "presum",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": [
                                     "waveform",
                                     0,
@@ -786,7 +786,7 @@ def test_lh5_buffer_processor_multiple_keys(lgnd_test_data):
                             },
                             "t_sat_lo, t_sat_hi": {
                                 "function": "saturation",
-                                "module": "pygama.dsp.processors",
+                                "module": "dspeed.processors",
                                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                                 "unit": "ADC",
                             },
@@ -829,7 +829,7 @@ def test_lh5_buffer_processor_multiple_keys(lgnd_test_data):
         "processors": {
             "t_sat_lo, t_sat_hi": {
                 "function": "saturation",
-                "module": "pygama.dsp.processors",
+                "module": "dspeed.processors",
                 "args": ["waveform", 16, "t_sat_lo", "t_sat_hi"],
                 "unit": "ADC"
                 }

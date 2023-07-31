@@ -1,7 +1,7 @@
 import fcutils
 import pytest
 
-from pygama.raw.fc.fc_config_decoder import FCConfigDecoder
+from daq2lh5.fc.fc_config_decoder import FCConfigDecoder
 
 
 @pytest.fixture(scope="module")

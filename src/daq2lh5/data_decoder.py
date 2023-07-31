@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from typing import Union
 
+import lgdo
 import numpy as np
+from lgdo import LH5Store
 
-from pygama import lgdo
-from pygama.lgdo.lh5_store import LH5Store
-from pygama.raw.raw_buffer import RawBuffer
+from .raw_buffer import RawBuffer
 
 LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]
 
@@ -32,7 +32,7 @@ class DataDecoder:
 
     For example ::
 
-      from pygama.lgdo.compression import RadwareSigcompress
+      from lgdo.compression import RadwareSigcompress
 
       FCEventDecoder.decoded_values = {
         "packet_id": {"dtype": "uint32", "compression": "gzip"},

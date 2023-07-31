@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import logging
 
+import lgdo
 import numpy as np
 import xmltodict
-
-from pygama import lgdo
 
 log = logging.getLogger(__name__)
 
@@ -19,18 +18,17 @@ DT5725_sample_freq = 0.25  # sample/ns
 def compass_config_to_struct(
     compass_config_file: str = None, wf_len: int = None
 ) -> lgdo.Struct:
-    """
-    Read run-level data from a CoMPASS configuration file.
+    """Read run-level data from a CoMPASS configuration file.
 
     Parameters
     ----------
     compass_config_file
-        An xml config file for a CoMPASS data run
+        an XML config file for a CoMPASS data run.
 
     Returns
     -------
     config_struct
-        A struct of configuration data to pass to the streamer
+        a struct of configuration data to pass to the streamer.
 
     JSON Configuration Example
     --------------------------

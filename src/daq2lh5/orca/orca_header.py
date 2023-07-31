@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 
-from pygama import lgdo
+import lgdo
 
 log = logging.getLogger(__name__)
 

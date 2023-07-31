@@ -1,6 +1,6 @@
 import pytest
 
-from pygama.raw.orca.orca_streamer import OrcaStreamer
+from daq2lh5.orca.orca_streamer import OrcaStreamer
 
 
 @pytest.fixture(scope="module")

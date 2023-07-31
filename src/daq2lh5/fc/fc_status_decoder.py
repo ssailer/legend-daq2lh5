@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import fcutils
 
-from pygama.raw.data_decoder import DataDecoder, RawBuffer
+from ..data_decoder import DataDecoder, RawBuffer
 
 
 class FCStatusDecoder(DataDecoder):

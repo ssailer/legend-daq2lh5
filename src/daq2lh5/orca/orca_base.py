@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pygama.raw.data_decoder import DataDecoder
-from pygama.raw.orca.orca_header import OrcaHeader
+from ..data_decoder import DataDecoder
+from .orca_header import OrcaHeader
 
 
 class OrcaDecoder(DataDecoder):

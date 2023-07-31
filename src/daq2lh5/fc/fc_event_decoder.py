@@ -5,9 +5,9 @@ import logging
 from typing import Any
 
 import fcutils
+import lgdo
 
-from pygama import lgdo
-from pygama.raw.data_decoder import DataDecoder
+from ..data_decoder import DataDecoder
 
 log = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ fc_decoded_values = {
 }
 """Default FlashCam Event decoded values.
 
-Re-used by :class:`~.raw.orca.orca_flashcam.ORFlashCamWaveformDecoder`.
+Re-used by :class:`~.orca.orca_flashcam.ORFlashCamWaveformDecoder`.
 
 Warning
 -------
@@ -136,7 +136,7 @@ class FCEventDecoder(DataDecoder):
             keyed by channel number.
         packet_id
             The index of the packet in the `fcio` stream. Incremented by
-            :class:`~.raw.fc.fc_streamer.FCStreamer`.
+            :class:`~.fc.fc_streamer.FCStreamer`.
 
         Returns
         -------

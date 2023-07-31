@@ -5,11 +5,11 @@ from typing import Any
 
 import numpy as np
 
-from pygama.raw.fc.fc_event_decoder import fc_decoded_values
-from pygama.raw.orca.orca_base import OrcaDecoder
-from pygama.raw.orca.orca_header import OrcaHeader
-from pygama.raw.orca.orca_packet import OrcaPacket
-from pygama.raw.raw_buffer import RawBufferLibrary
+from ..fc.fc_event_decoder import fc_decoded_values
+from ..raw_buffer import RawBufferLibrary
+from .orca_base import OrcaDecoder
+from .orca_header import OrcaHeader
+from .orca_packet import OrcaPacket
 
 log = logging.getLogger(__name__)
 
@@ -19,15 +19,15 @@ def get_key(fcid, board_id, fc_input: int) -> int:
 
 
 def get_fcid(key: int) -> int:
-    return int(np.floor(key / 1000000))
+    return int(key // 1000000)
 
 
 def get_board_id(key: int) -> int:
-    return int(np.floor(key / 100)) & 0xFFF
+    return int((key // 100) % 10000)
 
 
 def get_fc_input(key: int) -> int:
-    return int(key & 0xFF)
+    return int(key % 100)
 
 
 class ORFlashCamListenerConfigDecoder(OrcaDecoder):
@@ -458,7 +458,7 @@ class ORFlashCamWaveformDecoder(OrcaDecoder):
     def __init__(self, header: OrcaHeader = None, **kwargs) -> None:
         # start with the values defined in fcdaq
         self.decoded_values_template = copy.deepcopy(fc_decoded_values)
-        """A custom copy of :obj:`.raw.fc.fc_event_decoder.fc_decoded_values`."""
+        """A custom copy of :obj:`.fc.fc_event_decoder.fc_decoded_values`."""
         # add header values from Orca
         self.decoded_values_template.update(
             {

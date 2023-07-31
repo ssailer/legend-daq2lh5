@@ -1,10 +1,10 @@
 import logging
 from typing import Any
 
-from pygama.raw.orca.orca_base import OrcaDecoder
-from pygama.raw.orca.orca_header import OrcaHeader
-from pygama.raw.orca.orca_packet import OrcaPacket
-from pygama.raw.raw_buffer import RawBufferLibrary
+from ..raw_buffer import RawBufferLibrary
+from .orca_base import OrcaDecoder
+from .orca_header import OrcaHeader
+from .orca_packet import OrcaPacket
 
 log = logging.getLogger(__name__)
 

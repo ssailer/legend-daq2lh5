@@ -3,10 +3,10 @@ from __future__ import annotations
 import copy
 import logging
 
+import lgdo
 import numpy as np
 
-from pygama import lgdo
-from pygama.raw.data_decoder import DataDecoder
+from ..data_decoder import DataDecoder
 
 log = logging.getLogger(__name__)
 
@@ -115,7 +115,7 @@ class CompassEventDecoder(DataDecoder):
             keyed by channel number.
         packet_id
             The index of the packet in the `CoMPASS` stream. Incremented by
-            :class:`~.raw.compass.compass_streamer.CompassStreamer`.
+            :class:`~.compass.compass_streamer.CompassStreamer`.
         header
             The header of the CoMPASS file, along with user config info,
             that is used to determine waveform lengths and thus buffer sizes

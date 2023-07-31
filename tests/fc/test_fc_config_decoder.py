@@ -1,4 +1,4 @@
-from pygama import lgdo
+import lgdo
 
 
 def test_decoding(fcio_config):

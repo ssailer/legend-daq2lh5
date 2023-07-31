@@ -1,6 +1,6 @@
 import json
 
-import pygama.raw.raw_buffer as prb
+import daq2lh5.raw_buffer as prb
 
 
 def test_raw_buffer_list():

@@ -1,9 +1,9 @@
+import lgdo
 import numpy as np
 import pytest
 
-from pygama import lgdo
-from pygama.raw.fc.fc_event_decoder import FCEventDecoder
-from pygama.raw.raw_buffer import RawBuffer
+from daq2lh5.fc.fc_event_decoder import FCEventDecoder
+from daq2lh5.raw_buffer import RawBuffer
 
 
 @pytest.fixture(scope="module")

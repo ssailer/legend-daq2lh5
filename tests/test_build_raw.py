@@ -1,10 +1,11 @@
+import json
 import os
 from pathlib import Path
 
 import pytest
+from lgdo.lh5_store import LH5Store, ls
 
-from pygama.lgdo.lh5_store import LH5Store, ls
-from pygama.raw import build_raw
+from daq2lh5 import build_raw
 
 config_dir = Path(__file__).parent / "configs"
 
@@ -20,7 +21,7 @@ def test_build_raw_basics(lgnd_test_data):
         )
 
 
-def test_build_raw_fc(lgnd_test_data):
+def test_build_raw_fc(lgnd_test_data, tmptestdir):
     build_raw(
         in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio"),
         overwrite=True,
@@ -28,7 +29,7 @@ def test_build_raw_fc(lgnd_test_data):
 
     assert lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.lh5") != ""
 
-    out_file = "/tmp/L200-comm-20211130-phy-spms.lh5"
+    out_file = f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5"
 
     build_raw(
         in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio"),
@@ -36,11 +37,11 @@ def test_build_raw_fc(lgnd_test_data):
         overwrite=True,
     )
 
-    assert os.path.exists("/tmp/L200-comm-20211130-phy-spms.lh5")
+    assert os.path.exists(f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5")
 
 
-def test_build_raw_fc_out_spec(lgnd_test_data):
-    out_file = "/tmp/L200-comm-20211130-phy-spms.lh5"
+def test_build_raw_fc_out_spec(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5"
     out_spec = {
         "FCEventDecoder": {"spms": {"key_list": [[2, 4]], "out_stream": out_file}}
     }
@@ -57,16 +58,23 @@ def test_build_raw_fc_out_spec(lgnd_test_data):
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [2, 3, 4, 2, 3, 4, 2, 3, 4, 2]).all()
 
+    with open(f"{config_dir}/fc-out-spec.json") as f:
+        out_spec = json.load(f)
+
+    out_spec["FCEventDecoder"]["spms"]["out_stream"] = out_spec["FCEventDecoder"][
+        "spms"
+    ]["out_stream"].replace("/tmp", f"{tmptestdir}")
+
     build_raw(
         in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio"),
-        out_spec=f"{config_dir}/fc-out-spec.json",
+        out_spec=out_spec,
         n_max=10,
         overwrite=True,
     )
 
 
-def test_build_raw_fc_channelwise_out_spec(lgnd_test_data):
-    out_file = "/tmp/L200-comm-20211130-phy-spms.lh5"
+def test_build_raw_fc_channelwise_out_spec(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5"
     out_spec = {
         "FCEventDecoder": {
             "ch{key}": {
@@ -88,7 +96,7 @@ def test_build_raw_fc_channelwise_out_spec(lgnd_test_data):
     assert ls(out_file, "ch0/raw/waveform") == ["ch0/raw/waveform"]
 
 
-def test_build_raw_orca(lgnd_test_data):
+def test_build_raw_orca(lgnd_test_data, tmptestdir):
     build_raw(
         in_stream=lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca"),
         overwrite=True,
@@ -96,7 +104,7 @@ def test_build_raw_orca(lgnd_test_data):
 
     assert lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.lh5") != ""
 
-    out_file = "/tmp/L200-comm-20220519-phy-geds.lh5"
+    out_file = f"{tmptestdir}/L200-comm-20220519-phy-geds.lh5"
 
     build_raw(
         in_stream=lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca"),
@@ -104,11 +112,11 @@ def test_build_raw_orca(lgnd_test_data):
         overwrite=True,
     )
 
-    assert os.path.exists("/tmp/L200-comm-20220519-phy-geds.lh5")
+    assert os.path.exists(f"{tmptestdir}/L200-comm-20220519-phy-geds.lh5")
 
 
-def test_build_raw_orca_out_spec(lgnd_test_data):
-    out_file = "/tmp/L200-comm-20220519-phy-geds.lh5"
+def test_build_raw_orca_out_spec(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/L200-comm-20220519-phy-geds.lh5"
     out_spec = {
         "ORFlashCamADCWaveformDecoder": {
             "geds": {"key_list": [[1028802, 1028804]], "out_stream": out_file}
@@ -127,15 +135,22 @@ def test_build_raw_orca_out_spec(lgnd_test_data):
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [2, 3, 4, 2, 3, 4, 2, 3, 4, 2]).all()
 
+    with open(f"{config_dir}/orca-out-spec.json") as f:
+        out_spec = json.load(f)
+
+    out_spec["ORFlashCamADCWaveformDecoder"]["geds"]["out_stream"] = out_spec[
+        "ORFlashCamADCWaveformDecoder"
+    ]["geds"]["out_stream"].replace("/tmp", f"{tmptestdir}")
+
     build_raw(
         in_stream=lgnd_test_data.get_path("orca/fc/L200-comm-20220519-phy-geds.orca"),
-        out_spec=f"{config_dir}/orca-out-spec.json",
+        out_spec=out_spec,
         n_max=10,
         overwrite=True,
     )
 
 
-def test_build_raw_compass(lgnd_test_data):
+def test_build_raw_compass(lgnd_test_data, tmptestdir):
     build_raw(
         in_stream=lgnd_test_data.get_path("compass/compass_test_data.BIN"),
         overwrite=True,
@@ -146,7 +161,7 @@ def test_build_raw_compass(lgnd_test_data):
 
     assert lgnd_test_data.get_path("compass/compass_test_data.lh5") != ""
 
-    out_file = "/tmp/compass_test_data.lh5"
+    out_file = f"{tmptestdir}/compass_test_data.lh5"
 
     build_raw(
         in_stream=lgnd_test_data.get_path("compass/compass_test_data.BIN"),
@@ -157,11 +172,11 @@ def test_build_raw_compass(lgnd_test_data):
         ),
     )
 
-    assert os.path.exists("/tmp/compass_test_data.lh5")
+    assert os.path.exists(f"{tmptestdir}/compass_test_data.lh5")
 
 
-def test_build_raw_compass_out_spec(lgnd_test_data):
-    out_file = "/tmp/compass_test_data.lh5"
+def test_build_raw_compass_out_spec(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/compass_test_data.lh5"
     out_spec = {
         "CompassEventDecoder": {"spms": {"key_list": [[0, 1]], "out_stream": out_file}}
     }
@@ -182,8 +197,8 @@ def test_build_raw_compass_out_spec(lgnd_test_data):
     assert (lh5_obj["channel"].nda == [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]).all()
 
 
-def test_build_raw_compass_out_spec_no_config(lgnd_test_data):
-    out_file = "/tmp/compass_test_data.lh5"
+def test_build_raw_compass_out_spec_no_config(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/compass_test_data.lh5"
     out_spec = {
         "CompassEventDecoder": {"spms": {"key_list": [[0, 1]], "out_stream": out_file}}
     }
@@ -208,8 +223,8 @@ def test_build_raw_overwrite(lgnd_test_data):
         )
 
 
-def test_build_raw_orca_sis3316(lgnd_test_data):
-    out_file = "/tmp/coherent-run1141-bkg.lh5"
+def test_build_raw_orca_sis3316(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/coherent-run1141-bkg.lh5"
     out_spec = {
         "ORSIS3316WaveformDecoder": {
             "Card1": {"key_list": [48], "out_stream": out_file}
