@@ -116,6 +116,7 @@ class FCEventDecoder(DataDecoder):
         """
         self.fc_config = fc_config
         self.decoded_values["waveform"]["wf_len"] = self.fc_config["nsamples"].value
+        self.decoded_values["tracelist"]["length_guess"] = self.fc_config["nadcs"].value
 
     def decode_packet(
         self,
