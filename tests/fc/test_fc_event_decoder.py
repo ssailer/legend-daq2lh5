@@ -11,13 +11,15 @@ def event_rbkd(fcio_obj, fcio_config):
     decoder = FCEventDecoder()
     decoder.set_file_config(fcio_config)
 
-    # get just one record (because size=1, see below) and check if it's a (sparse)event
+    # get just one record and check if it's a (sparse) event
     assert fcio_obj.get_record() == 3 or fcio_obj.get_record() == 6
 
     # build raw buffer for each channel in the FC trace list
     rbkd = {}
     for i in fcio_obj.tracelist:
-        rbkd[i] = RawBuffer(lgdo=decoder.make_lgdo(size=1))
+        nadcs = decoder.get_max_rows_in_packet()
+        rbkd[i] = RawBuffer(lgdo=decoder.make_lgdo(size=nadcs))
+        rbkd[i].fill_safety = nadcs
 
     # decode packet into the lgdo's and check if the buffer is full
     assert decoder.decode_packet(fcio=fcio_obj, evt_rbkd=rbkd, packet_id=69) is True
@@ -74,7 +76,7 @@ def test_values(event_rbkd, fcio_obj):
         loc = event_rbkd[ch].loc - 1
         tbl = event_rbkd[ch].lgdo
 
-        assert event_rbkd[ch].fill_safety == fc.numtraces
+        assert event_rbkd[ch].fill_safety >= fc.numtraces
 
         assert tbl["packet_id"].nda[loc] == 69
         assert tbl["eventnumber"].nda[loc] == fc.eventnumber

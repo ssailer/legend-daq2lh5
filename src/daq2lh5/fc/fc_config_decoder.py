@@ -7,7 +7,6 @@ import lgdo
 import numpy as np
 
 from ..data_decoder import DataDecoder
-from ..raw_buffer import RawBuffer
 
 log = logging.getLogger(__name__)
 
@@ -60,6 +59,3 @@ class FCConfigDecoder(DataDecoder):
 
     def make_lgdo(self, key: int = None, size: int = None) -> lgdo.Struct:
         return self.config
-
-    def buffer_is_full(self, rb: RawBuffer) -> bool:
-        return rb.loc > 0

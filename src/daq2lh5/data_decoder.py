@@ -9,7 +9,6 @@ import lgdo
 import numpy as np
 from lgdo import LH5Store
 
-from .raw_buffer import RawBuffer
 
 LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]
 
@@ -273,8 +272,3 @@ class DataDecoder:
         buffers.
         """
         return 1
-
-    def buffer_is_full(self, rb: RawBuffer) -> bool:
-        """Returns whether the buffer is too full to read in another packet."""
-
-        return len(rb.lgdo) - rb.loc < self.get_max_rows_in_packet()
