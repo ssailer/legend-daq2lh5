@@ -189,7 +189,7 @@ class DataStreamer(ABC):
                 rb.lgdo = decoder.make_lgdo(key=key, size=buffer_size)
                 rb.fill_safety = decoder.get_max_rows_in_packet()
                 if buffer_size < rb.fill_safety:
-                    log.error(
+                    raise ValueError(
                         f"{dec_name} requires a buffer of at least length"
                         f"{rb.fill_safety} but buffer size is only {buffer_size}"
                     )
