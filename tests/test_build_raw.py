@@ -27,7 +27,14 @@ def test_build_raw_fc(lgnd_test_data, tmptestdir):
         overwrite=True,
     )
 
+    out_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.lh5")
     assert lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.lh5") != ""
+
+    with pytest.raises(FileExistsError):
+        build_raw(
+            in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
+        )
+    os.remove(out_file)
 
     out_file = f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5"
 
@@ -228,13 +235,6 @@ def test_build_raw_compass_out_spec_no_config(lgnd_test_data, tmptestdir):
     lh5_obj, n_rows = store.read_object("/spms", out_file)
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]).all()
-
-
-def test_build_raw_overwrite(lgnd_test_data):
-    with pytest.raises(FileExistsError):
-        build_raw(
-            in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
-        )
 
 
 def test_build_raw_orca_sis3316(lgnd_test_data, tmptestdir):
