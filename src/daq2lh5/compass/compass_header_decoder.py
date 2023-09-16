@@ -5,7 +5,6 @@ import logging
 import lgdo
 
 from ..data_decoder import DataDecoder
-from ..raw_buffer import RawBuffer
 from .compass_config_parser import compass_config_to_struct
 
 log = logging.getLogger(__name__)
@@ -73,6 +72,3 @@ class CompassHeaderDecoder(DataDecoder):
                 "self.config still None, need to decode header before calling make_lgdo"
             )
         return self.config  # self.config is already an lgdo, namely it is a struct
-
-    def buffer_is_full(self, rb: RawBuffer) -> bool:
-        return rb.loc > 0

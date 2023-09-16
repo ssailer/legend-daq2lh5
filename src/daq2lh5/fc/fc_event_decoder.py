@@ -97,14 +97,6 @@ class FCEventDecoder(DataDecoder):
         super().__init__(*args, **kwargs)
         self.skipped_channels = {}
         self.fc_config = None
-        self.max_numtraces = 1
-
-    def get_key_lists(self) -> range:
-        return [range(self.fc_config["nadcs"].value)]
-
-    def get_decoded_values(self, channel: int = None) -> dict[str, dict[str, Any]]:
-        # FC uses the same values for all channels
-        return self.decoded_values
 
     def set_file_config(self, fc_config: lgdo.Struct) -> None:
         """Access ``FCIOConfig`` members once when each file is opened.
@@ -116,6 +108,17 @@ class FCEventDecoder(DataDecoder):
         """
         self.fc_config = fc_config
         self.decoded_values["waveform"]["wf_len"] = self.fc_config["nsamples"].value
+        self.decoded_values["tracelist"]["length_guess"] = self.fc_config["nadcs"].value
+
+    def get_key_lists(self) -> range:
+        return [range(self.fc_config["nadcs"].value)]
+
+    def get_decoded_values(self, channel: int = None) -> dict[str, dict[str, Any]]:
+        # FC uses the same values for all channels
+        return self.decoded_values
+
+    def get_max_rows_in_packet(self) -> int:
+        return self.fc_config["nadcs"].value
 
     def decode_packet(
         self,
@@ -143,12 +146,6 @@ class FCEventDecoder(DataDecoder):
         n_bytes
             (estimated) number of bytes in the packet that was just decoded.
         """
-        if fcio.numtraces > self.max_numtraces:
-            self.max_numtraces = fcio.numtraces
-            # The buffer might be storing all channels' data, so set the
-            # fill_safety to the max number of traces we've seen so far.
-            for rb in evt_rbkd.values():
-                rb.fill_safety = self.max_numtraces
         any_full = False
 
         # a list of channels is read out simultaneously for each event
@@ -214,4 +211,4 @@ class FCEventDecoder(DataDecoder):
             evt_rbkd[iwf].loc += 1
             any_full |= evt_rbkd[iwf].is_full()
 
-        return any_full
+        return bool(any_full)

@@ -6,7 +6,7 @@ import plistlib
 
 import lgdo
 
-from ..raw_buffer import RawBuffer, RawBufferLibrary
+from ..raw_buffer import RawBufferLibrary
 from .orca_base import OrcaDecoder
 from .orca_header import OrcaHeader
 from .orca_packet import OrcaPacket
@@ -25,9 +25,6 @@ class OrcaHeaderDecoder(OrcaDecoder):
 
     def make_lgdo(self, key: int = None, size: int = None) -> lgdo.Scalar:
         return lgdo.Scalar(value="")
-
-    def buffer_is_full(self, rb: RawBuffer) -> bool:
-        return rb.loc > 0
 
     def decode_packet(
         self, packet: OrcaPacket, packet_id: int, rbl: RawBufferLibrary = None
