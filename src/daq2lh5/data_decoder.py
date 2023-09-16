@@ -9,7 +9,6 @@ import lgdo
 import numpy as np
 from lgdo import LH5Store
 
-
 LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]
 
 

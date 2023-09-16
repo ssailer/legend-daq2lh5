@@ -37,7 +37,21 @@ def test_build_raw_fc(lgnd_test_data, tmptestdir):
         overwrite=True,
     )
 
-    assert os.path.exists(f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5")
+    assert os.path.exists(out_file)
+
+
+def test_build_raw_fc_ghissue10(lgnd_test_data, tmptestdir):
+    out_file = f"{tmptestdir}/l200-p06-r007-cal-20230725T202227Z.lh5"
+    build_raw(
+        in_stream=lgnd_test_data.get_path(
+            "fcio/l200-p06-r007-cal-20230725T202227Z.fcio"
+        ),
+        out_spec=out_file,
+        buffer_size=123,
+        overwrite=True,
+    )
+
+    assert os.path.exists(out_file)
 
 
 def test_build_raw_fc_out_spec(lgnd_test_data, tmptestdir):
