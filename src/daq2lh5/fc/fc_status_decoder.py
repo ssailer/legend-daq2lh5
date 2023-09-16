@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import fcutils
 
-from ..data_decoder import DataDecoder, RawBuffer
+from ..data_decoder import DataDecoder
+from ..raw_buffer import RawBuffer
 
 
 class FCStatusDecoder(DataDecoder):
