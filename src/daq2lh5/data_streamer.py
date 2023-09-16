@@ -190,8 +190,8 @@ class DataStreamer(ABC):
                 rb.fill_safety = decoder.get_max_rows_in_packet()
                 if buffer_size < rb.fill_safety:
                     log.error(
-                        f"{dec_name} requires a buffer of at least length",
-                        f"{rb.fill_safety} but buffer size is only {buffer_size}",
+                        f"{dec_name} requires a buffer of at least length"
+                        f"{rb.fill_safety} but buffer size is only {buffer_size}"
                     )
 
         # make sure there were no entries in rb_lib that weren't among the
