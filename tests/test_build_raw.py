@@ -61,6 +61,15 @@ def test_build_raw_fc_ghissue10(lgnd_test_data, tmptestdir):
     assert os.path.exists(out_file)
 
 
+def test_invalid_user_buffer_size(lgnd_test_data, tmptestdir):
+    with pytest.raises(ValueError):
+        build_raw(
+            in_stream=lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio"),
+            buffer_size=5,
+            overwrite=True,
+        )
+
+
 def test_build_raw_fc_out_spec(lgnd_test_data, tmptestdir):
     out_file = f"{tmptestdir}/L200-comm-20211130-phy-spms.lh5"
     out_spec = {
