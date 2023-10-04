@@ -10,3 +10,16 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/legend-exp/legend-daq2lh5?logo=github)
 ![License](https://img.shields.io/github/license/legend-exp/legend-daq2lh5)
 [![Read the Docs](https://img.shields.io/readthedocs/legend-daq2lh5?logo=readthedocs)](https://legend-daq2lh5.readthedocs.io)
+
+JSON-configurable conversion of digitized data into
+[LEGEND HDF5](https://legend-exp.github.io/legend-data-format-specs/dev/hdf5/),
+with optional data pre-processing via [dspeed](https://dspeed.readthedocs.io)
+and data compression via [legend-pydataobj](https://legend-pydataobj.readthedocs.io).
+
+Currently supported DAQ data formats:
+* [FlashCam](https://www.mizzi-computer.de/home)
+* [CoMPASS](https://www.caen.it/products/compass)
+* [ORCA](https://github.com/unc-enap/Orca), reading out:
+  - FlashCam
+  - [Struck SIS3302](https://www.struck.de/sis3302.htm)
+  - [Struck SIS3316](https://www.struck.de/sis3316.html)
