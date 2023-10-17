@@ -47,7 +47,7 @@ def hex_dump(
     as_short: bool = False,
     id_dict: dict = None,
     use_logging: bool = True,
-    return_output = False
+    return_output=False,
 ) -> None:
     output = []
     data_id = get_data_id(packet, shift=shift_data_id)
@@ -84,4 +84,3 @@ def hex_dump(
 
     if return_output:
         return output
-

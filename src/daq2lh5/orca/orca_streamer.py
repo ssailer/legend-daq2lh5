@@ -47,7 +47,7 @@ class OrcaStreamer(DataStreamer):
         pkt_hdr = self.buffer[:1]
         n_bytes_read = self.in_stream.readinto(pkt_hdr)  # buffer is at least 4 kB long
         self.n_bytes_read += n_bytes_read
-        if n_bytes_read == 0: # EOF
+        if n_bytes_read == 0:  # EOF
             return None
         if n_bytes_read != 4:
             raise RuntimeError(f"only got {n_bytes_read} bytes for packet header")
@@ -57,10 +57,14 @@ class OrcaStreamer(DataStreamer):
         filepos = self.in_stream.tell() - n_bytes_read
         if self.packet_id < len(self.packet_locs):
             if self.packet_locs[self.packet_id] != filepos:
-                raise RuntimeError(f"filepos for packet {self.packet_id} was {filepos} but {self.packet_locs[self.packet_id]} was expected")
+                raise RuntimeError(
+                    f"filepos for packet {self.packet_id} was {filepos} but {self.packet_locs[self.packet_id]} was expected"
+                )
         else:
             if len(self.packet_locs) != self.packet_id:
-                raise RuntimeError(f"loaded packet {self.packet_id} after packet {len(self.packet_locs)-1}")
+                raise RuntimeError(
+                    f"loaded packet {self.packet_id} after packet {len(self.packet_locs)-1}"
+                )
             self.packet_locs.append(filepos)
 
         return pkt_hdr
@@ -82,29 +86,29 @@ class OrcaStreamer(DataStreamer):
         n = int(n)
         while n > 0:
             pkt_hdr = self.load_packet_header()
-            if pkt_hdr is None: 
+            if pkt_hdr is None:
                 return False
             self.in_stream.seek((orca_packet.get_n_words(pkt_hdr) - 1) * 4, 1)
             n -= 1
         return True
-
 
     def build_packet_locs(self, saveloc=True) -> None:
         loc = self.in_stream.tell()
         if len(self.packet_locs) > 0:
             self.in_stream.seek(self.packet_locs[-1])
         while self.skip_packet():
-            pass # builds the rest of the packet_locs list
-        if saveloc: 
+            pass  # builds the rest of the packet_locs list
+        if saveloc:
             self.in_stream.seek(loc)
 
     def count_packets(self, saveloc=True) -> None:
         self.build_packet_locs(saveloc=saveloc)
         return len(self.packet_locs)
 
-
     # TODO: need to correct for endianness?
-    def load_packet(self, index: int = None, whence: int = 0, skip_unknown_ids: bool = False) -> np.uint32 | None:
+    def load_packet(
+        self, index: int = None, whence: int = 0, skip_unknown_ids: bool = False
+    ) -> np.uint32 | None:
         """Loads the next packet into the internal buffer.
 
         Returns packet as a :class:`numpy.uint32` view of the buffer (a slice),
@@ -138,16 +142,16 @@ class OrcaStreamer(DataStreamer):
             raise RuntimeError("self.in_stream is None")
 
         if index is not None:
-            if whence not in [0,1,2]:
+            if whence not in [0, 1, 2]:
                 raise ValueError(f"whence can't be {whence}")
             index = int(index)
             # convert whence 1 or 2 to whence = 0
-            if whence == 1: # index is relative to current position
-                index += self.packet_id-1
-            elif whence == 2: # index is relative to end of file
+            if whence == 1:  # index is relative to current position
+                index += self.packet_id - 1
+            elif whence == 2:  # index is relative to end of file
                 self.build_packet_locs(saveloc=False)
-                index += len(self.packet_locs)-2
-            if index < 0: 
+                index += len(self.packet_locs) - 2
+            if index < 0:
                 self.in_stream.seek(0)
                 return None
             while index >= len(self.packet_locs):
@@ -155,10 +159,10 @@ class OrcaStreamer(DataStreamer):
                     return None
             self.in_stream.seek(self.packet_locs[index])
 
-
         # load packet header
         pkt_hdr = self.load_packet_header()
-        if pkt_hdr is None: return None
+        if pkt_hdr is None:
+            return None
 
         # if it's a short packet, we are done
         if orca_packet.is_short(pkt_hdr):
