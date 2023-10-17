@@ -160,7 +160,7 @@ def test_buffer_processor_waveform_lengths(lgnd_test_data, tmptestdir):
         assert len(raw_packet_waveform_values[0].nda[0]) == presum_rate * len(
             presummed_packet_waveform_values[0].nda[0]
         )
-        assert presummed_packet_waveform_values[0].nda.dtype == np.uint32
+        assert isinstance(presummed_packet_waveform_values[0].nda[0][0], np.uint32)
         assert len(raw_packet_waveform_values[0].nda[0]) == len(
             windowed_packet_waveform_values[0].nda[0]
         ) + np.abs(window_start_index) + np.abs(window_end_index)
@@ -438,7 +438,7 @@ def test_buffer_processor_separate_name_tables(lgnd_test_data, tmptestdir):
         assert len(raw_packet_waveform_values[0].nda[0]) == presum_rate * len(
             presummed_packet_waveform_values[0].nda[0]
         )
-        assert presummed_packet_waveform_values[0].dtype == np.uint32
+        assert isinstance(presummed_packet_waveform_values[0].nda[0][0], np.uint32)
         assert len(raw_packet_waveform_values[0].nda[0]) == len(
             windowed_packet_waveform_values[0].nda[0]
         ) + np.abs(window_start_index) + np.abs(window_end_index)
@@ -745,7 +745,7 @@ def test_proc_geds_no_proc_spms(lgnd_test_data, tmptestdir):
 
             assert np.array_equal(raw_sat_lo.nda, proc_sat_lo.nda)
             assert np.array_equal(raw_sat_hi.nda, proc_sat_hi.nda)
-            assert proc_sat_lo.dtype == np.uint16
+            assert isinstance(proc_sat_lo.nda[0], np.uint16)
 
 
 # check that packet indexes match in verification test
@@ -1029,7 +1029,7 @@ def test_buffer_processor_multiple_keys(lgnd_test_data, tmptestdir):
 
             assert np.array_equal(raw_sat_lo.nda, proc_sat_lo.nda)
             assert np.array_equal(raw_sat_hi.nda, proc_sat_hi.nda)
-            assert proc_sat_lo.dtype == np.uint16
+            assert isinstance(proc_sat_lo.nda[0], np.uint16)
 
 
 def test_buffer_processor_all_pass(lgnd_test_data, tmptestdir):
@@ -1365,7 +1365,7 @@ def test_buffer_processor_drop_waveform_small_buffer(lgnd_test_data, tmptestdir)
 
             assert np.array_equal(raw_sat_lo.nda, proc_sat_lo.nda)
             assert np.array_equal(raw_sat_hi.nda, proc_sat_hi.nda)
-            assert proc_sat_lo.dtype == np.uint16
+            assert isinstance(proc_sat_lo.nda[0], np.uint16)
 
 
 # check that packet indexes match in verification test

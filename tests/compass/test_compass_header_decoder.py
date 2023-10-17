@@ -49,25 +49,24 @@ def test_values(compass_config):
     }
     # We have a nested struct, so we need some nasty recursion
     for key in compass_config.keys():
-        if type(compass_config[key]) == Scalar:
+        if isinstance(compass_config[key], Scalar):
             assert compass_config[key].value == expected_dict[key]
         # Nested struct
         else:
             for key_2 in compass_config[key]:
-                if type(compass_config[key][key_2]) == Scalar:
+                if isinstance(compass_config[key][key_2], Scalar):
                     assert compass_config[key][key_2].value == expected_dict[key][key_2]
                 else:
                     for key_3 in compass_config[key][key_2]:
-                        if type(compass_config[key][key_2][key_3]) == Scalar:
+                        if isinstance(compass_config[key][key_2][key_3], Scalar):
                             assert (
                                 compass_config[key][key_2][key_3].value
                                 == expected_dict[key][key_2][key_3]
                             )
                         else:
                             for key_4 in compass_config[key][key_2][key_3]:
-                                if (
-                                    type(compass_config[key][key_2][key_3][key_4])
-                                    == Scalar
+                                if isinstance(
+                                    compass_config[key][key_2][key_3][key_4], Scalar
                                 ):
                                     assert (
                                         compass_config[key][key_2][key_3][key_4].value
@@ -77,13 +76,11 @@ def test_values(compass_config):
                                     for key_5 in compass_config[key][key_2][key_3][
                                         key_4
                                     ]:
-                                        if (
-                                            type(
-                                                compass_config[key][key_2][key_3][
-                                                    key_4
-                                                ][key_5]
-                                            )
-                                            == Scalar
+                                        if isinstance(
+                                            compass_config[key][key_2][key_3][key_4][
+                                                key_5
+                                            ],
+                                            Scalar,
                                         ):
                                             assert (
                                                 compass_config[key][key_2][key_3][
@@ -142,7 +139,7 @@ def test_values_no_config(compass_config_no_settings):
     }
     # We have a nested struct, so we need some nasty recursion
     for key in compass_config_no_settings.keys():
-        if type(compass_config_no_settings[key]) == Scalar:
+        if isinstance(compass_config_no_settings[key], Scalar):
             if (np.isnan(compass_config_no_settings[key].value)) and (
                 np.isnan(expected_dict[key])
             ):
@@ -151,7 +148,7 @@ def test_values_no_config(compass_config_no_settings):
                 assert compass_config_no_settings[key].value == expected_dict[key]
         else:
             for key_2 in compass_config_no_settings[key]:
-                if type(compass_config_no_settings[key][key_2]) == Scalar:
+                if isinstance(compass_config_no_settings[key][key_2], Scalar):
                     if (np.isnan(compass_config_no_settings[key][key_2].value)) and (
                         np.isnan(expected_dict[key][key_2])
                     ):
@@ -163,9 +160,8 @@ def test_values_no_config(compass_config_no_settings):
                         )
                 else:
                     for key_3 in compass_config_no_settings[key][key_2]:
-                        if (
-                            type(compass_config_no_settings[key][key_2][key_3])
-                            == Scalar
+                        if isinstance(
+                            compass_config_no_settings[key][key_2][key_3], Scalar
                         ):
                             if (
                                 np.isnan(
@@ -180,13 +176,11 @@ def test_values_no_config(compass_config_no_settings):
                                 )
                         else:
                             for key_4 in compass_config_no_settings[key][key_2][key_3]:
-                                if (
-                                    type(
-                                        compass_config_no_settings[key][key_2][key_3][
-                                            key_4
-                                        ]
-                                    )
-                                    == Scalar
+                                if isinstance(
+                                    compass_config_no_settings[key][key_2][key_3][
+                                        key_4
+                                    ],
+                                    Scalar,
                                 ):
                                     if np.isnan(
                                         compass_config_no_settings[key][key_2][key_3][
@@ -209,13 +203,11 @@ def test_values_no_config(compass_config_no_settings):
                                     for key_5 in compass_config_no_settings[key][key_2][
                                         key_3
                                     ][key_4]:
-                                        if (
-                                            type(
-                                                compass_config_no_settings[key][key_2][
-                                                    key_3
-                                                ][key_4][key_5]
-                                            )
-                                            == Scalar
+                                        if isinstance(
+                                            compass_config_no_settings[key][key_2][
+                                                key_3
+                                            ][key_4][key_5],
+                                            Scalar,
                                         ):
                                             if (
                                                 np.isnan(
