@@ -742,7 +742,7 @@ def test_raw_geds_no_proc_spms(lgnd_test_data):
 
             assert np.array_equal(raw_sat_lo.nda, proc_sat_lo.nda)
             assert np.array_equal(raw_sat_hi.nda, proc_sat_hi.nda)
-            assert type(proc_sat_lo.nda[0]) == np.uint16
+            assert isinstance(proc_sat_lo.nda[0], np.uint16)
 
 
 # check that packet indexes match in verification test
@@ -1029,7 +1029,7 @@ def test_lh5_buffer_processor_multiple_keys(lgnd_test_data):
 
             assert np.array_equal(raw_sat_lo.nda, proc_sat_lo.nda)
             assert np.array_equal(raw_sat_hi.nda, proc_sat_hi.nda)
-            assert type(proc_sat_lo.nda[0]) == np.uint16
+            assert isinstance(proc_sat_lo.nda[0], np.uint16)
 
 
 def test_buffer_processor_all_pass(lgnd_test_data):
