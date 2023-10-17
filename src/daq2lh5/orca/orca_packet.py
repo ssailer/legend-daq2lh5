@@ -47,11 +47,9 @@ def hex_dump(
     as_short: bool = False,
     id_dict: dict = None,
     use_logging: bool = True,
+    return_output = False
 ) -> None:
-    dump_cmd = print  # noqa: T202
-    if use_logging:
-        dump_cmd = log.debug
-
+    output = []
     data_id = get_data_id(packet, shift=shift_data_id)
     n_words = get_n_words(packet)
     if id_dict is not None:
@@ -62,9 +60,9 @@ def hex_dump(
     else:
         heading = f"data ID = {data_id}"
     if print_n_words:
-        dump_cmd(f"{heading}: {n_words} words")
+        output.append(f"{heading}: {n_words} words")
     else:
-        dump_cmd(f"{heading}:")
+        output.append(f"{heading}:")
         n_to_print = int(np.minimum(n_words, max_words))
         pad = int(np.ceil(np.log10(n_to_print)))
         for i in range(n_to_print):
@@ -76,4 +74,14 @@ def hex_dump(
                 line += f" {packet[i]}"
             if as_short:
                 line += f" {np.frombuffer(packet[i:i+1].tobytes(), dtype='uint16')}"
-            dump_cmd(line)
+            output.append(line)
+
+    dump_cmd = print  # noqa: T202
+    if use_logging:
+        dump_cmd = log.debug
+    for line in output:
+        dump_cmd(line)
+
+    if return_output:
+        return output
+
