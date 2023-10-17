@@ -23,7 +23,7 @@ def tmptestdir():
 
 
 def pytest_sessionfinish(session, exitstatus):
-    if exitstatus == 0:
+    if exitstatus == 0 and os.path.exists(_tmptestdir):
         shutil.rmtree(_tmptestdir)
 
 
