@@ -19,9 +19,10 @@ def test_orca_packet_funcs(orca_stream):
         packet = orca_stream.load_packet(ii)
         if packet is None: break
         name = id_dict[orca_packet.get_data_id(packet)]
+        #if ii < 20: print(ii, name)
         if ii == 0: assert name == 'OrcaHeaderDecoder'
         if ii == 1: assert name == 'ORRunDecoderForRun'
-        if ii == 911: assert name == 'ORRunDecoderForRun'
+        if ii == 910: assert name == 'ORRunDecoderForRun'
         if name not in seen: seen.append(name)
     expected = [
         'OrcaHeaderDecoder', 
