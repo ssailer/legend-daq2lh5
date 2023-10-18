@@ -94,12 +94,15 @@ class OrcaStreamer(DataStreamer):
 
     def build_packet_locs(self, saveloc=True) -> None:
         loc = self.in_stream.tell()
+        pid = self.packet_id
         if len(self.packet_locs) > 0:
             self.in_stream.seek(self.packet_locs[-1])
+            self.packet_id = len(self.packet_locs)-2
         while self.skip_packet():
             pass  # builds the rest of the packet_locs list
         if saveloc:
             self.in_stream.seek(loc)
+            self.packet_id = pid
 
     def count_packets(self, saveloc=True) -> None:
         self.build_packet_locs(saveloc=saveloc)
@@ -153,11 +156,13 @@ class OrcaStreamer(DataStreamer):
                 index += len(self.packet_locs) - 2
             if index < 0:
                 self.in_stream.seek(0)
+                self.packet_id = -1
                 return None
             while index >= len(self.packet_locs):
                 if self.skip_packet() == False:
                     return None
             self.in_stream.seek(self.packet_locs[index])
+            self.packet_id = index-1
 
         # load packet header
         pkt_hdr = self.load_packet_header()
