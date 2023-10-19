@@ -415,10 +415,10 @@ class OrcaStreamer(DataStreamer):
                 f"packet {self.packet_id}: data_id = {data_id}, decoder = {'None' if data_id not in self.decoder_id_dict else type(self.decoder_id_dict[data_id]).__name__}"
             )
             if data_id in self.missing_decoders:
-                name = self.header.get_id_to_decoder_name_dict(shift_data_id=False)[data_id]
-                log.warning(
-                    f"no implementation of {name}, packets were skipped"
-                )
+                name = self.header.get_id_to_decoder_name_dict(shift_data_id=False)[
+                    data_id
+                ]
+                log.warning(f"no implementation of {name}, packets were skipped")
                 continue
             if data_id in self.rbl_id_dict:
                 break
