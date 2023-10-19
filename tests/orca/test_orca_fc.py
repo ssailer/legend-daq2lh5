@@ -1,13 +1,12 @@
 import pytest
 
 
-
 @pytest.fixture(scope="module")
 def fc_packets(orca_stream):
     packets = []
-    packets.append(orca_stream.load_packet(3).copy()) # config
-    packets.append(orca_stream.load_packet(4).copy()) # status
-    packets.append(orca_stream.load_packet(13).copy()) # waveform
+    packets.append(orca_stream.load_packet(3).copy())  # config
+    packets.append(orca_stream.load_packet(4).copy())  # status
+    packets.append(orca_stream.load_packet(13).copy())  # waveform
     orca_stream.close_stream()  # avoid warning that file is still open
     return packets
 
@@ -18,7 +17,7 @@ def test_orfc_config_decoding(orca_stream, fc_packets):
 
     data_id = orca_packet.get_data_id(config_packet)
     name = orca_stream.header.get_id_to_decoder_name_dict()[data_id]
-    assert name == 'ORFlashCamListenerConfigDecoder'
+    assert name == "ORFlashCamListenerConfigDecoder"
 
 
 def test_orfc_status_decoding(orca_stream, fc_packets):
@@ -27,7 +26,7 @@ def test_orfc_status_decoding(orca_stream, fc_packets):
 
     data_id = orca_packet.get_data_id(status_packet)
     name = orca_stream.header.get_id_to_decoder_name_dict()[data_id]
-    assert name == 'ORFlashCamListenerStatusDecoder'
+    assert name == "ORFlashCamListenerStatusDecoder"
 
 
 def test_orfc_waveform_decoding(orca_stream, fc_packets):
@@ -36,4 +35,4 @@ def test_orfc_waveform_decoding(orca_stream, fc_packets):
 
     data_id = orca_packet.get_data_id(wf_packet)
     name = orca_stream.header.get_id_to_decoder_name_dict()[data_id]
-    assert name == 'ORFlashCamWaveformDecoder'
+    assert name == "ORFlashCamWaveformDecoder"

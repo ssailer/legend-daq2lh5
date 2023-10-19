@@ -97,7 +97,7 @@ class OrcaStreamer(DataStreamer):
         pid = self.packet_id
         if len(self.packet_locs) > 0:
             self.in_stream.seek(self.packet_locs[-1])
-            self.packet_id = len(self.packet_locs)-2
+            self.packet_id = len(self.packet_locs) - 2
         while self.skip_packet():
             pass  # builds the rest of the packet_locs list
         if saveloc:
@@ -162,7 +162,7 @@ class OrcaStreamer(DataStreamer):
                 if self.skip_packet() == False:
                     return None
             self.in_stream.seek(self.packet_locs[index])
-            self.packet_id = index-1
+            self.packet_id = index - 1
 
         # load packet header
         pkt_hdr = self.load_packet_header()
