@@ -126,12 +126,9 @@ class OrcaStreamer(DataStreamer):
             the file, None will be returned.
         whence
             used when an index is supplied. Follows the file.seek() convention:
-            - whence = 0 (default) means index is relative to the beginning of
-              the file
-            - whence = 1 means index is relative to the current position in the
-              file
-            - whence = 2 means relative to the end of the file
-
+            whence = 0 (default) means index is relative to the beginning of the
+            file; whence = 1 means index is relative to the current position in
+            the file; whence = 2 means relative to the end of the file.
 
         Returns
         ----------
@@ -139,8 +136,6 @@ class OrcaStreamer(DataStreamer):
             a view of the internal buffer spanning the packet data (uint32
             ndarray). If you want to hold on to the packet data while you load
             more packets, you can call copy() on the view to make a copy.
-
-
         """
         if self.in_stream is None:
             raise RuntimeError("self.in_stream is None")
@@ -160,7 +155,7 @@ class OrcaStreamer(DataStreamer):
                 self.packet_id = -1
                 return None
             while index >= len(self.packet_locs):
-                if self.skip_packet() == False:
+                if not self.skip_packet():
                     return None
             self.in_stream.seek(self.packet_locs[index])
             self.packet_id = index - 1

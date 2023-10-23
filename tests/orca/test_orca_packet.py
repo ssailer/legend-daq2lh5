@@ -8,7 +8,7 @@ def test_orca_packet_funcs(orca_stream):
     assert orca_stream.count_packets() == 911
 
     packet = orca_stream.load_packet()
-    assert orca_packet.is_short(packet) == False
+    assert orca_packet.is_short(packet) is False
     assert orca_packet.get_data_id(packet) == 3
     assert orca_packet.get_n_words(packet) == 4
     assert orca_packet.hex_dump(packet, return_output=True)[-1] == "3 0x63c1977a"
