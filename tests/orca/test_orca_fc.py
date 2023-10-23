@@ -1,4 +1,5 @@
 import pytest
+from daq2lh5.orca import orca_packet
 
 
 @pytest.fixture(scope="module")
