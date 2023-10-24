@@ -326,6 +326,7 @@ class ORFlashCamListenerStatusDecoder(OrcaDecoder):
     def decode_packet(
         self, packet: OrcaPacket, packet_id: int, rbl: RawBufferLibrary
     ) -> bool:
+        return False  # FIXME: skip decoding until pyfcutils is updated
         """Decode the ORCA FlashCam Status packet."""
         # aliases for brevity
         if len(rbl) != 1:
