@@ -11,7 +11,7 @@ from lgdo.compression import RadwareSigcompress, ULEB128ZigZagDiff
 from daq2lh5.build_raw import build_raw
 from daq2lh5.fc.fc_event_decoder import fc_decoded_values
 
-# skip compression in build_raw
+# skip waveform compression in build_raw
 fc_decoded_values["waveform"].pop("compression", None)
 
 config_dir = Path(__file__).parent / "test_buffer_processor_configs"
@@ -1408,6 +1408,9 @@ def test_buffer_processor_compression_settings(lgnd_test_data, tmptestdir):
                             codec_shift=-32768
                         ),
                         "presummed_waveform/values": ULEB128ZigZagDiff(),
+                    },
+                    "hdf5_settings": {
+                        "presummed_waveform/values": {"shuffle": True},
                     },
                 },
             }
