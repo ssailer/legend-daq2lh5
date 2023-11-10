@@ -25,7 +25,7 @@ class DataDecoder:
     Any key-value entry in a configuration dictionary attached to an element
     of `decoded_values` is typically interpreted as an attribute to be attached
     to the corresponding LGDO. This feature can be for example exploited to
-    specify the data compression algorithm used by
+    specify HDF5 dataset settings used by
     :meth:`~.lgdo.lh5_store.LH5Store.write_object` to write LGDOs to disk.
 
     For example ::
@@ -33,22 +33,23 @@ class DataDecoder:
       from lgdo.compression import RadwareSigcompress
 
       FCEventDecoder.decoded_values = {
-        "packet_id": {"dtype": "uint32", "compression": "gzip"},
+        "packet_id": {"dtype": "uint32", "hdf5_settings": {"compression": "gzip"}},
         # ...
         "waveform": {
           "dtype": "uint16",
           "datatype": "waveform",
           # ...
           "compression": {"values": RadwareSigcompress(codec_shift=-32768)},
+          "hdf5_settings": {"t0": {"compression": "lzf", shuffle: True}},
         }
       }
 
-    LGDOs corresponding to ``packet_id`` and ``waveform`` will have their
-    `compression` attribute set as ``"gzip"`` and
-    ``RadwareSigcompress(codec_shift=-32768)``, respectively. Before being
-    written to disk, they will compressed with the HDF5 built-in Gzip filter
-    and with the :class:`~.lgdo.compression.radware.RadwareSigcompress`
-    waveform compressor.
+    The LGDO corresponding to ``packet_id`` will have its `hdf5_settings`
+    attribute set as ``{"compression": "gzip"}``, while ``waveform.values``
+    will have its `compression` attribute set to
+    ``RadwareSigcompress(codec_shift=-32768)``.  Before being written to disk,
+    they will be compressed with the HDF5 built-in Gzip filter and with the
+    :class:`~.lgdo.compression.radware.RadwareSigcompress` waveform compressor.
 
     Examples
     --------
@@ -178,7 +179,10 @@ class DataDecoder:
                 dt = attrs.pop("dt")
                 dt_units = attrs.pop("dt_units")
                 wf_len = attrs.pop("wf_len")
-                compression = attrs.pop("compression", None)
+                settings = {
+                    "compression": attrs.pop("compression", {}),
+                    "hdf5_settings": attrs.pop("hdf5_settings", {}),
+                }
 
                 wf_table = lgdo.WaveformTable(
                     size=size,
@@ -190,18 +194,14 @@ class DataDecoder:
                     dtype=dtype,
                     attrs=attrs,
                 )
-                if compression is not None:
-                    if not isinstance(compression, dict):
-                        raise RuntimeError(
-                            "waveform/compression attribute must be a dictionary"
-                        )
 
-                    if "values" in compression:
-                        wf_table.values.attrs["compression"] = compression["values"]
-                    if "t0" in compression:
-                        wf_table.t0.attrs["compression"] = compression["t0"]
-                    if "dt" in compression:
-                        wf_table.dt.attrs["compression"] = compression["dt"]
+                # attach compression/hdf5_settings to sub-fields
+                for el in ["values", "t0", "dt"]:
+                    for settings_name in ("hdf5_settings", "compression"):
+                        if el in settings[settings_name]:
+                            wf_table[el].attrs[settings_name] = settings[settings_name][
+                                el
+                            ]
 
                 data_obj.add_field(field, wf_table)
                 continue

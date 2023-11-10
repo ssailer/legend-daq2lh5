@@ -6,10 +6,8 @@ import logging
 import os
 import time
 
-import hdf5plugin
 import lgdo
 import numpy as np
-from lgdo.lh5_store import DEFAULT_HDF5_COMPRESSION
 from tqdm.auto import tqdm
 
 from .compass.compass_streamer import CompassStreamer
@@ -28,7 +26,7 @@ def build_raw(
     n_max: int = np.inf,
     overwrite: bool = False,
     compass_config_file: str = None,
-    hdf5_compression: str | dict | hdf5plugin.filters.Filter = DEFAULT_HDF5_COMPRESSION,
+    hdf5_settings: dict[str, ...] = None,
     **kwargs,
 ) -> None:
     """Convert data into LEGEND HDF5 raw-tier format.
@@ -77,12 +75,16 @@ def build_raw(
           json-shorthand for the output specification (see
           :mod:`.compass.compass_event_decoder`).
 
-    hdf5_compression
-        forwarded to :meth:`~.lgdo.lh5_store.LH5Store.write_object`.
+    hdf5_settings
+        keyword arguments (as a dict) forwarded to
+        :meth:`~.lgdo.lh5_store.LH5Store.write_object`.
 
     **kwargs
         sent to :class:`.RawBufferLibrary` generation as `kw_dict` argument.
     """
+    if hdf5_settings is None:
+        hdf5_settings = {}
+
     # convert any environment variables in in_stream so that we can check for readability
     in_stream = os.path.expandvars(in_stream)
     # later: fix if in_stream is not a file
@@ -223,7 +225,7 @@ def build_raw(
 
     # Write header data
     lh5_store = lgdo.LH5Store(keep_open=True)
-    write_to_lh5_and_clear(header_data, lh5_store, hdf5_compression=hdf5_compression)
+    write_to_lh5_and_clear(header_data, lh5_store, **hdf5_settings)
 
     # Now loop through the data
     n_bytes_last = streamer.n_bytes_read
@@ -248,7 +250,7 @@ def build_raw(
         if log.getEffectiveLevel() <= logging.INFO and n_max < np.inf:
             progress_bar.update(n_read)
 
-        write_to_lh5_and_clear(chunk_list, lh5_store, hdf5_compression=hdf5_compression)
+        write_to_lh5_and_clear(chunk_list, lh5_store, **hdf5_settings)
 
         if n_max <= 0:
             log.info(f"Wrote {n_max} rows, exiting...")
