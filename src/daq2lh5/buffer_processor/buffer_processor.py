@@ -48,9 +48,16 @@ def buffer_processor(rb: RawBuffer) -> Table:
     ``"dtype_conv": {"lgdo": "dtype" [, ...]}`` `(dict)`
       Casts `lgdo` to the requested data type.
 
-    ``"compression": { "lgdo": "codec_name" [, ...]}`` `(dict)`
+    ``"compression": {"lgdo": "codec_name" [, ...]}`` `(dict)`
       Updates the `compression` attribute of `lgdo` to `codec_name`. The
       attribute sets the compression algorithm applied by
+      :func:`~.lgdo.lh5_store.LH5Store.read_object` before writing `lgdo` to
+      disk. Can be used to apply custom waveform compression algorithms from
+      :mod:`lgdo.compression`.
+
+    ``"hdf5_settings": {"lgdo": { <HDF5 settings> }}`` `(dict)`
+      Updates the `hdf5_settings` attribute of `lgdo`. The attribute sets the
+      HDF5 dataset options applied by
       :func:`~.lgdo.lh5_store.LH5Store.read_object` before writing `lgdo` to
       disk.
 
@@ -102,7 +109,9 @@ def buffer_processor(rb: RawBuffer) -> Table:
                 ,}
                 "compression": {
                   "windowed_waveform/values": RadwareSigcompress(codec_shift=-32768),
-                  "presummed_waveform/values": ULEB128ZigZagDiff(),
+                }
+                "hdf5_settings": {
+                  "presummed_waveform/values": {"shuffle": True, "compression": "lzf"},
                 }
               }
             },
@@ -143,7 +152,7 @@ def buffer_processor(rb: RawBuffer) -> Table:
     if "drop" in rb.proc_spec.keys():
         process_drop(rb, tmp_table)
 
-    # at last, assign compression attributes
+    # assign compression attributes
     if "compression" in rb.proc_spec.keys():
         for name, codec in rb.proc_spec["compression"].items():
             ptr = tmp_table
@@ -153,6 +162,15 @@ def buffer_processor(rb: RawBuffer) -> Table:
             ptr.attrs["compression"] = (
                 codec if isinstance(codec, WaveformCodec) else str2wfcodec(codec)
             )
+
+    # and HDF5 settings
+    if "hdf5_settings" in rb.proc_spec.keys():
+        for name, settings in rb.proc_spec["hdf5_settings"].items():
+            ptr = tmp_table
+            for word in name.split("/"):
+                ptr = ptr[word]
+
+            ptr.attrs["hdf5_settings"] = settings
 
     return tmp_table
 

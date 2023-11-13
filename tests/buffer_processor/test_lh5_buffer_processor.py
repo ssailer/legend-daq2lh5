@@ -3,6 +3,7 @@ import os
 import sys
 from pathlib import Path
 
+import h5py
 import lgdo
 import numpy as np
 from dspeed import build_processing_chain as bpc
@@ -11,7 +12,7 @@ from daq2lh5.buffer_processor.lh5_buffer_processor import lh5_buffer_processor
 from daq2lh5.build_raw import build_raw
 from daq2lh5.fc.fc_event_decoder import fc_decoded_values
 
-# skip compression in build_raw
+# skip waveform compression in build_raw
 fc_decoded_values["waveform"].pop("compression", None)
 
 config_dir = Path(__file__).parent / "test_buffer_processor_configs"
@@ -308,7 +309,7 @@ def test_lh5_buffer_processor_separate_name_tables(lgnd_test_data):
     # Set up I/O files, including config
     daq_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
     raw_file = daq_file.replace(
-        "L200-comm-20211130-phy-spms.fcio", " L200-comm-fake-geds-and-spms.lh5"
+        "L200-comm-20211130-phy-spms.fcio", "L200-comm-fake-geds-and-spms.lh5"
     )
     processed_file = raw_file.replace(
         "L200-comm-fake-geds-and-spms.lh5", "L200-comm-fake-geds-and-spms_proc.lh5"
@@ -1089,3 +1090,60 @@ def test_buffer_processor_all_pass(lgnd_test_data):
                         proc_df = proc[obj].get_dataframe([str(sub_obj)])
 
             assert raw_df.equals(proc_df)
+
+
+def test_lh5_buffer_processor_hdf5_settings(lgnd_test_data):
+    # Set up I/O files, including config
+    daq_file = lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
+    raw_file = daq_file.replace(
+        "L200-comm-20211130-phy-spms.fcio", "L200-comm-20211130-phy-spms.lh5"
+    )
+    processed_file = raw_file.replace(
+        "L200-comm-20211130-phy-spms.lh5", "L200-comm-20211130-phy-spms_proc.lh5"
+    )
+
+    out_spec = {
+        "FCEventDecoder": {
+            "ch{key}": {
+                "key_list": [[0, 6]],
+                "out_stream": processed_file + ":{name}",
+                "out_name": "raw",
+                "proc_spec": {
+                    "window": ["waveform", 1000, -1000, "windowed_waveform"],
+                    "dsp_config": {
+                        "outputs": ["presum_2rate", "presummed_waveform"],
+                        "processors": {
+                            "presum_rate, presummed_waveform": {
+                                "function": "presum",
+                                "module": "dspeed.processors",
+                                "args": [
+                                    "waveform",
+                                    0,
+                                    "presum_rate",
+                                    "presummed_waveform(shape=len(waveform)/16, period=waveform.period*16, offset=waveform.offset)",
+                                ],
+                                "unit": "ADC",
+                            }
+                        },
+                    },
+                    "drop": ["waveform"],
+                    "dtype_conv": {
+                        "presummed_waveform/values": "uint32",
+                    },
+                    "hdf5_settings": {
+                        "presummed_waveform/values": {
+                            "compression": "lzf",
+                            "shuffle": False,
+                        },
+                    },
+                },
+            }
+        }
+    }
+
+    # Build the raw file
+    build_raw(in_stream=daq_file, out_spec=out_spec, overwrite=True)
+
+    with h5py.File(processed_file) as f:
+        assert f["ch0"]["raw"]["presummed_waveform"]["values"].compression == "lzf"
+        assert f["ch0"]["raw"]["presummed_waveform"]["values"].shuffle is False
