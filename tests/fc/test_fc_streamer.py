@@ -47,8 +47,8 @@ def test_read_packet(lgnd_test_data):
     init_rbytes = streamer.n_bytes_read
     assert streamer.read_packet() is True  # read was successful
     assert streamer.packet_id == 1  # packet id is incremented
-    assert streamer.n_bytes_read == init_rbytes + 144 + 2 * streamer.fcio.numtraces * (
-        streamer.fcio.nsamples + 3
+    assert streamer.n_bytes_read == init_rbytes + 144 + 2 * streamer.fcio.event.num_traces * (
+        streamer.fcio.config.eventsamples + 2
     )
 
 
@@ -70,8 +70,8 @@ def test_read_packet_partial(lgnd_test_data):
     init_rbytes = streamer.n_bytes_read
     assert streamer.read_packet() is True  # read was successful
     assert streamer.packet_id == 1  # packet id is incremented
-    assert streamer.n_bytes_read == init_rbytes + 144 + 2 * streamer.fcio.numtraces * (
-        streamer.fcio.nsamples + 3
+    assert streamer.n_bytes_read == init_rbytes + 144 + 2 * streamer.fcio.event.num_traces * (
+        streamer.fcio.config.eventsamples + 2
     )
 
 
