@@ -76,15 +76,19 @@ class FCStatusDecoder(DataDecoder):
         # Size of each status data
         tbl["size"].nda[ii] = fcio.status.size
 
-        # FC card-wise environment status (temp., volt., hum., ...)
-        tbl["environment"].nda[ii][:] = fcio.status.environment
+        # TODO: map card values
+        # conceptually the following must happen
+        # but still to be decided which way cards are entered into the tbl
 
-        # FC card-wise list DAQ errors during data taking
-        tbl["totalerrors"].nda[ii] = fcio.status.totalerrors
-        tbl["linkerrors"].nda[ii] = fcio.status.linkerrors
-        tbl["ctierrors"].nda[ii] = fcio.status.ctierrors
-        tbl["enverrors"].nda[ii] = fcio.status.enverrors
-        tbl["othererrors"].nda[ii][:] = fcio.status.othererrors
+        # # FC card-wise environment status (temp., volt., hum., ...)
+        # tbl["environment"].nda[ii][:] = fcio.status.data[:].environment
+
+        # # FC card-wise list DAQ errors during data taking
+        # tbl["totalerrors"].nda[ii][:] = fcio.status.data[:].totalerrors
+        # tbl["linkerrors"].nda[ii][:] = fcio.status.data[:].linkerrors
+        # tbl["ctierrors"].nda[ii][:] = fcio.status.data[:].ctierrors
+        # tbl["enverrors"].nda[ii][:] = fcio.status.data[:].enverrors
+        # tbl["othererrors"].nda[ii][:] = fcio.status.data[:].othererrors
 
         status_rb.loc += 1
 
