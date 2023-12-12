@@ -1,6 +1,7 @@
 import lgdo
 import numpy as np
 import pytest
+from fcio import FCIOTag
 
 from daq2lh5.fc.fc_event_decoder import FCEventDecoder
 from daq2lh5.raw_buffer import RawBuffer
@@ -12,11 +13,12 @@ def event_rbkd(fcio_obj, fcio_config):
     decoder.set_file_config(fcio_config)
 
     # get just one record and check if it's a (sparse) event
-    assert fcio_obj.get_record() == 3 or fcio_obj.get_record() == 6
+    fcio_obj.get_record()
+    assert fcio_obj.tag == FCIOTag.Event or fcio_obj.tag == FCIOTag.SparseEvent
 
     # build raw buffer for each channel in the FC trace list
     rbkd = {}
-    for i in fcio_obj.tracelist:
+    for i in fcio_obj.event.trace_list:
         nadcs = decoder.get_max_rows_in_packet()
         rbkd[i] = RawBuffer(lgdo=decoder.make_lgdo(size=nadcs))
         rbkd[i].fill_safety = nadcs
@@ -72,44 +74,44 @@ def test_data_types(event_rbkd):
 
 def test_values(event_rbkd, fcio_obj):
     fc = fcio_obj
-    for ch in fc.tracelist:
+    for ch in fc.event.trace_list:
         loc = event_rbkd[ch].loc - 1
         tbl = event_rbkd[ch].lgdo
 
-        assert event_rbkd[ch].fill_safety >= fc.numtraces
+        assert event_rbkd[ch].fill_safety >= fc.event.num_traces
 
         assert tbl["packet_id"].nda[loc] == 69
-        assert tbl["eventnumber"].nda[loc] == fc.eventnumber
-        assert tbl["timestamp"].nda[loc] == fc.eventtime
-        assert tbl["runtime"].nda[loc] == fc.runtime
-        assert tbl["numtraces"].nda[loc] == fc.numtraces
+        assert tbl["eventnumber"].nda[loc] == fc.event.timestamp[0]
+        assert tbl["timestamp"].nda[loc] == fc.event.utc_unix
+        assert tbl["runtime"].nda[loc] == fc.event.run_time
+        assert tbl["numtraces"].nda[loc] == fc.event.num_traces
 
         # custom logic for VectorOfVectors
         start = 0 if loc == 0 else tbl["tracelist"].cumulative_length.nda[loc - 1]
-        stop = start + len(fc.tracelist)
+        stop = start + len(fc.event.trace_list)
         assert np.array_equal(
-            tbl["tracelist"].flattened_data.nda[start:stop], fc.tracelist
+            tbl["tracelist"].flattened_data.nda[start:stop], fc.event.trace_list
         )
 
-        assert np.array_equal(tbl["baseline"].nda[loc], fc.baseline[ch])
-        assert np.array_equal(tbl["daqenergy"].nda[loc], fc.daqenergy[ch])
+        assert np.array_equal(tbl["baseline"].nda[loc], fc.event.fpga_baseline[ch])
+        assert np.array_equal(tbl["daqenergy"].nda[loc], fc.event.fpga_energy[ch])
         assert tbl["channel"].nda[loc] == ch
-        assert tbl["ts_pps"].nda[loc] == fc.timestamp_pps
-        assert tbl["ts_ticks"].nda[loc] == fc.timestamp_ticks
-        assert tbl["ts_maxticks"].nda[loc] == fc.timestamp_maxticks
-        assert tbl["mu_offset_sec"].nda[loc] == fc.timeoffset_mu_sec
-        assert tbl["mu_offset_usec"].nda[loc] == fc.timeoffset_mu_usec
-        assert tbl["to_master_sec"].nda[loc] == fc.timeoffset_master_sec
-        assert tbl["delta_mu_usec"].nda[loc] == fc.timeoffset_dt_mu_usec
-        assert tbl["abs_delta_mu_usec"].nda[loc] == fc.timeoffset_abs_mu_usec
-        assert tbl["to_start_sec"].nda[loc] == fc.timeoffset_start_sec
-        assert tbl["to_start_usec"].nda[loc] == fc.timeoffset_start_usec
-        assert tbl["dr_start_pps"].nda[loc] == fc.deadregion_start_pps
-        assert tbl["dr_start_ticks"].nda[loc] == fc.deadregion_start_ticks
-        assert tbl["dr_stop_pps"].nda[loc] == fc.deadregion_stop_pps
-        assert tbl["dr_stop_ticks"].nda[loc] == fc.deadregion_stop_ticks
-        assert tbl["dr_maxticks"].nda[loc] == fc.deadregion_maxticks
-        assert tbl["deadtime"].nda[loc] == fc.deadtime
+        assert tbl["ts_pps"].nda[loc] == fc.event.timestamp[1]
+        assert tbl["ts_ticks"].nda[loc] == fc.event.timestamp[2]
+        assert tbl["ts_maxticks"].nda[loc] == fc.event.timestamp[3]
+        assert tbl["mu_offset_sec"].nda[loc] == fc.event.timeoffset[0]
+        assert tbl["mu_offset_usec"].nda[loc] == fc.event.timeoffset[1]
+        assert tbl["to_master_sec"].nda[loc] == fc.event.timeoffset[2]
+        assert tbl["delta_mu_usec"].nda[loc] == fc.event.timeoffset[3]
+        assert tbl["abs_delta_mu_usec"].nda[loc] == fc.event.timeoffset[4]
+        assert tbl["to_start_sec"].nda[loc] == fc.event.timeoffset[5]
+        assert tbl["to_start_usec"].nda[loc] == fc.event.timeoffset[6]
+        assert tbl["dr_start_pps"].nda[loc] == fc.event.deadregion[0]
+        assert tbl["dr_start_ticks"].nda[loc] == fc.event.deadregion[1]
+        assert tbl["dr_stop_pps"].nda[loc] == fc.event.deadregion[2]
+        assert tbl["dr_stop_ticks"].nda[loc] == fc.event.deadregion[3]
+        assert tbl["dr_maxticks"].nda[loc] == fc.event.deadregion[4]
+        assert tbl["deadtime"].nda[loc] == fc.event.dead_time_nsec / 1e9
         assert tbl["waveform"]["t0"].nda[loc] == 0
         assert tbl["waveform"]["dt"].nda[loc] == 16
-        assert np.array_equal(tbl["waveform"]["values"].nda[loc], fc.traces[ch])
+        assert np.array_equal(tbl["waveform"]["values"].nda[loc], fc.event.trace[ch])
