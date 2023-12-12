@@ -207,7 +207,7 @@ class FCEventDecoder(DataDecoder):
             tbl["dr_stop_ticks"].nda[ii] = fcio.event.deadregion[3]
             tbl["dr_maxticks"].nda[ii] = fcio.event.deadregion[4]
             # TODO: add calculation per channel to fcio-py
-            tbl["deadtime"].nda[ii] = fcio.event.dead_time_nsec[idx] / 1e9
+            tbl["deadtime"].nda[ii] = fcio.event.dead_time_nsec / 1e9
 
 
             # if len(traces[iwf]) != fcio.nsamples: # number of sample per trace check
