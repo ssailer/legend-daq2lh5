@@ -1,4 +1,6 @@
+
 import lgdo
+from fcio import FCIOTag
 import numpy as np
 import pytest
 from pytest import approx
@@ -15,8 +17,8 @@ def status_rb(fcio_obj):
     # just get the first status record in the file and exit
     while True:
         pid = fcio_obj.get_record()
-        assert pid > 0  # make sure there is at least one status record in the file
-        if pid == 4:
+        assert pid is True  # make sure there is at least one status record in the file
+        if fcio_obj == FCIOTag.Status:
             decoder.decode_packet(fcio=fcio_obj, status_rb=rb, packet_id=420)
             break
 
