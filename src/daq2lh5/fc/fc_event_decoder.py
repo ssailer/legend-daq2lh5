@@ -4,7 +4,7 @@ import copy
 import logging
 from typing import Any
 
-import fcutils
+from fcio import FCIO
 import lgdo
 
 from ..data_decoder import DataDecoder
@@ -25,7 +25,7 @@ fc_decoded_values = {
     "numtraces": {"dtype": "int32"},
     # list of triggered adc channels
     "tracelist": {
-        "dtype": "int16",
+        "dtype": "uint16",
         "datatype": "array<1>{array<1>{real}}",  # vector of vectors
         "length_guess": 16,
     },
@@ -122,7 +122,7 @@ class FCEventDecoder(DataDecoder):
 
     def decode_packet(
         self,
-        fcio: fcutils.fcio,
+        fcio: FCIO,
         evt_rbkd: lgdo.Table | dict[int, lgdo.Table],
         packet_id: int,
     ) -> bool:
@@ -149,7 +149,10 @@ class FCEventDecoder(DataDecoder):
         any_full = False
 
         # a list of channels is read out simultaneously for each event
-        for iwf in fcio.tracelist:
+        # for iwf in fcio.event.trace_list:
+        for idx in range(fcio.event.num_traces):
+        
+            iwf = fcio.event.trace_list[idx]
             if iwf not in evt_rbkd:
                 if iwf not in self.skipped_channels:
                     # TODO: should this be a warning instead?
@@ -158,10 +161,10 @@ class FCEventDecoder(DataDecoder):
                 self.skipped_channels[iwf] += 1
                 continue
             tbl = evt_rbkd[iwf].lgdo
-            if fcio.nsamples != tbl["waveform"]["values"].nda.shape[1]:
+            if fcio.config.eventsamples != tbl["waveform"]["values"].nda.shape[1]:
                 log.warning(
                     "event wf length was",
-                    fcio.nsamples,
+                    fcio.config.eventsamples,
                     "when",
                     self.decoded_values["waveform"]["wf_len"],
                     "were expected",
@@ -173,40 +176,42 @@ class FCEventDecoder(DataDecoder):
             tbl["packet_id"].nda[ii] = packet_id
             tbl["eventnumber"].nda[
                 ii
-            ] = fcio.eventnumber  # the eventnumber since the beginning of the file
-            tbl["timestamp"].nda[ii] = fcio.eventtime  # the time since epoch in seconds
+            ] = fcio.event.eventnumber  # the eventnumber since the beginning of the file
+            tbl["timestamp"].nda[ii] = fcio.event.utc_unix  # the time since epoch in seconds
             tbl["runtime"].nda[
                 ii
-            ] = fcio.runtime  # the time since the beginning of the file in seconds
-            tbl["numtraces"].nda[ii] = fcio.numtraces  # number of triggered adcs
+            ] = fcio.event.run_time  # the time since the beginning of the file in seconds
+            tbl["numtraces"].nda[ii] = fcio.event.num_traces  # number of triggered adcs
             tbl["tracelist"]._set_vector_unsafe(
-                ii, fcio.tracelist
+                ii, fcio.event.trace_list
             )  # list of triggered adcs
-            tbl["baseline"].nda[ii] = fcio.baseline[
+            tbl["baseline"].nda[ii] = fcio.event.fpga_baseline[
                 iwf
             ]  # the fpga baseline values for each channel in LSB
-            tbl["daqenergy"].nda[ii] = fcio.daqenergy[
+            tbl["daqenergy"].nda[ii] = fcio.event.fpga_energy[
                 iwf
             ]  # the fpga energy values for each channel in LSB
-            tbl["ts_pps"].nda[ii] = fcio.timestamp_pps
-            tbl["ts_ticks"].nda[ii] = fcio.timestamp_ticks
-            tbl["ts_maxticks"].nda[ii] = fcio.timestamp_maxticks
-            tbl["mu_offset_sec"].nda[ii] = fcio.timeoffset_mu_sec
-            tbl["mu_offset_usec"].nda[ii] = fcio.timeoffset_mu_usec
-            tbl["to_master_sec"].nda[ii] = fcio.timeoffset_master_sec
-            tbl["delta_mu_usec"].nda[ii] = fcio.timeoffset_dt_mu_usec
-            tbl["abs_delta_mu_usec"].nda[ii] = fcio.timeoffset_abs_mu_usec
-            tbl["to_start_sec"].nda[ii] = fcio.timeoffset_start_sec
-            tbl["to_start_usec"].nda[ii] = fcio.timeoffset_start_usec
-            tbl["dr_start_pps"].nda[ii] = fcio.deadregion_start_pps
-            tbl["dr_start_ticks"].nda[ii] = fcio.deadregion_start_ticks
-            tbl["dr_stop_pps"].nda[ii] = fcio.deadregion_stop_pps
-            tbl["dr_stop_ticks"].nda[ii] = fcio.deadregion_stop_ticks
-            tbl["dr_maxticks"].nda[ii] = fcio.deadregion_maxticks
-            tbl["deadtime"].nda[ii] = fcio.deadtime
+            tbl["ts_pps"].nda[ii] = fcio.event.timestamp[1]
+            tbl["ts_ticks"].nda[ii] = fcio.event.timestamp[2]
+            tbl["ts_maxticks"].nda[ii] = fcio.event.timestamp[3]
+            tbl["mu_offset_sec"].nda[ii] = fcio.event.timeoffset[0]
+            tbl["mu_offset_usec"].nda[ii] = fcio.event.timeoffset[1]
+            tbl["to_master_sec"].nda[ii] = fcio.event.timeoffset[2]
+            tbl["delta_mu_usec"].nda[ii] = fcio.event.timeoffset[3]
+            tbl["abs_delta_mu_usec"].nda[ii] = fcio.event.timeoffset[4]
+            tbl["to_start_sec"].nda[ii] = fcio.event.timeoffset[5]
+            tbl["to_start_usec"].nda[ii] = fcio.event.timeoffset[6]
+            tbl["dr_start_pps"].nda[ii] = fcio.event.deadregion[0]
+            tbl["dr_start_ticks"].nda[ii] = fcio.event.deadregion[1]
+            tbl["dr_stop_pps"].nda[ii] = fcio.event.deadregion[2]
+            tbl["dr_stop_ticks"].nda[ii] = fcio.event.deadregion[3]
+            tbl["dr_maxticks"].nda[ii] = fcio.event.deadregion[4]
+            # TODO: add calculation per channel to fcio-py
+            tbl["deadtime"].nda[ii] = fcio.event.dead_time_nsec[idx] / 1e9
+
 
             # if len(traces[iwf]) != fcio.nsamples: # number of sample per trace check
-            tbl["waveform"]["values"].nda[ii][:] = fcio.traces[iwf]
+            tbl["waveform"]["values"].nda[ii][:] = fcio.event.trace[idx]
 
             evt_rbkd[iwf].loc += 1
             any_full |= evt_rbkd[iwf].is_full()

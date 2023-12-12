@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-import fcutils
+from fcio import FCIO
 import lgdo
 import numpy as np
 
@@ -22,9 +22,9 @@ class FCConfigDecoder(DataDecoder):
 
     Example
     -------
-    >>> import fcutils
+    >>> from fcio import fcio_open
     >>> from daq2lh5.fc.fc_config_decoder import FCConfigDecoder
-    >>> fc = fcutils.fcio('file.fcio')
+    >>> fc = fcio_open('file.fcio')
     >>> decoder = FCConfigDecoder()
     >>> config = decoder.decode_config(fc)
     >>> type(config)
@@ -35,7 +35,7 @@ class FCConfigDecoder(DataDecoder):
         super().__init__(*args, **kwargs)
         self.config = lgdo.Struct()
 
-    def decode_config(self, fcio: fcutils.fcio) -> lgdo.Struct:
+    def decode_config(self, fcio: FCIO) -> lgdo.Struct:
         config_names = [
             "nsamples",  # samples per channel
             "nadcs",  # number of adc channels
@@ -49,12 +49,26 @@ class FCConfigDecoder(DataDecoder):
             "adccards",  # number of attached fadccards
             "gps",  # gps mode (0: not used, 1: external pps and 10MHz)
         ]
-        for name in config_names:
+        fcio_attr_names = [
+            "eventsamples",
+            "adcs",
+            "triggers",
+            "telid",
+            "adcbits",
+            "sumlength",
+            "blprecision",
+            "mastercards",
+            "triggercards",
+            "adccards",
+            "gps"
+        ]
+        for name, fcio_attr_name in zip(config_names, fcio_attr_names):
             if name in self.config:
                 log.warning(f"{name} already in self.config. skipping...")
                 continue
-            value = np.int32(getattr(fcio, name))  # all config fields are int32
+            value = np.int32(getattr(fcio, fcio_attr_name))  # all config fields are int32
             self.config.add_field(name, lgdo.Scalar(value))
+        self.config.add_field("tracemap", lgdo.Array())
         return self.config
 
     def make_lgdo(self, key: int = None, size: int = None) -> lgdo.Struct:

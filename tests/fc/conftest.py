@@ -1,4 +1,4 @@
-import fcutils
+import fcio
 import pytest
 
 from daq2lh5.fc.fc_config_decoder import FCConfigDecoder
@@ -6,7 +6,7 @@ from daq2lh5.fc.fc_config_decoder import FCConfigDecoder
 
 @pytest.fixture(scope="module")
 def fcio_obj(lgnd_test_data):
-    return fcutils.fcio(
+    return fcio.fcio_open(
         lgnd_test_data.get_path("fcio/L200-comm-20211130-phy-spms.fcio")
     )
 

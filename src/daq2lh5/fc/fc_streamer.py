@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-import fcutils
+from fcio import fcio_open, FCIOTag
 
 from ..data_decoder import DataDecoder
 from ..data_streamer import DataStreamer
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 class FCStreamer(DataStreamer):
     """
-    Decode FlashCam data, using the ``fcutils`` package to handle file access,
+    Decode FlashCam data, using the ``fcio`` package to handle file access,
     and the FlashCam data decoders to save the results and write to output.
     """
 
@@ -57,7 +57,7 @@ class FCStreamer(DataStreamer):
             a list of length 1 containing the raw buffer holding the
             :class:`~.fc_config_decoder.FCConfig` table.
         """
-        self.fcio = fcutils.fcio(fcio_filename)
+        self.fcio = fcio_open(fcio_filename)
         self.n_bytes_read = 0
 
         # read in file header (config) info
@@ -113,40 +113,23 @@ class FCStreamer(DataStreamer):
         return [rb]
 
     def close_stream(self) -> None:
-        self.fcio = None  # should cause close file in fcio.__dealloc__
+        self.fcio.close()
 
     def read_packet(self) -> bool:
-        rc = self.fcio.get_record()
-        if rc == 0:
+        if not self.fcio.get_record():
             return False  # no more data
 
         self.packet_id += 1
 
-        if rc == 1:  # config (header) data
+        if self.fcio.tag == FCIOTag.Config:  # config (header) data
             log.warning(
                 f"got a header after start of run? n_bytes_read = {self.n_bytes_read}"
             )
             self.n_bytes_read += 11 * 4  # there are 11 ints in the fcio_config struct
             return True
 
-        elif rc == 2:  # calib record -- no longer supported
-            log.warning(
-                f"warning: got a calib record? n_bytes_read = {self.n_bytes_read}"
-            )
-            return True
-
-        # FIXME: push to a buffer of skipped packets?
-        # FIXME: need to at least update n_bytes?
-        elif rc == 5:  # recevent
-            log.warning(
-                f"got a RecEvent packet -- skipping? n_bytes_read = {self.n_bytes_read}"
-            )
-            # sizeof(fcio_recevent): (6 + 3*10 + 1*2304 + 3*4000)*4
-            self.n_bytes_read += 57360
-            return True
-
         # Status record
-        elif rc == 4:
+        elif self.fcio.tag == FCIOTag.Status:
             if self.status_rb is not None:
                 self.any_full |= self.status_decoder.decode_packet(
                     self.fcio, self.status_rb, self.packet_id
@@ -156,13 +139,28 @@ class FCStreamer(DataStreamer):
             return True
 
         # Event or SparseEvent record
-        elif rc == 3 or rc == 6:
+        elif self.fcio.tag == FCIOTag.Event or self.fcio.tag == FCIOTag.SparseEvent:
             if self.event_rbkd is not None:
                 self.any_full |= self.event_decoder.decode_packet(
                     self.fcio, self.event_rbkd, self.packet_id
                 )
             # sizeof(fcio_event): (5 + 3*10 + 1)*4 + numtraces*(1 + nsamples+2)*2
             self.n_bytes_read += (
-                144 + self.fcio.numtraces * (self.fcio.nsamples + 3) * 2
+                  self.fcio.event.timestamp_size
+                + self.fcio.event.deadregion_size
+                + self.fcio.event.timeoffset_size
+                # 144
+                + self.fcio.event.num_traces * (self.fcio.config.eventsamples + 2) * 2
             )
             return True
+        
+        # FIXME: push to a buffer of skipped packets?
+        # FIXME: need to at least update n_bytes?
+        else:  # unknown record
+            log.warning(
+                f"got an unknown record -- skipping? n_bytes_read = {self.n_bytes_read}"
+            )
+            # sizeof(fcio_recevent): (6 + 3*10 + 1*2304 + 3*4000)*4
+            self.n_bytes_read += 57360
+            return True
+        
