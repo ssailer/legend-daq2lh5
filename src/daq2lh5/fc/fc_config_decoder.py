@@ -66,9 +66,9 @@ class FCConfigDecoder(DataDecoder):
             if name in self.config:
                 log.warning(f"{name} already in self.config. skipping...")
                 continue
-            value = np.int32(getattr(fcio, fcio_attr_name))  # all config fields are int32
+            value = np.int32(getattr(fcio.config, fcio_attr_name))  # all config fields are int32
             self.config.add_field(name, lgdo.Scalar(value))
-        self.config.add_field("tracemap", lgdo.Array())
+        self.config.add_field("tracemap", lgdo.Array(fcio.config.tracemap))
         return self.config
 
     def make_lgdo(self, key: int = None, size: int = None) -> lgdo.Struct:
