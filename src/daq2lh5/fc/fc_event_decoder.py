@@ -67,7 +67,10 @@ fc_decoded_values = {
     "dr_maxticks": {"dtype": "int32"},
     # current dead time calculated from deadregion (dr) fields.
     # Give the total dead time if summed up.
-    "deadtime": {"dtype": "float64"},
+    "deadtime_nsec": {"dtype": "int64"},
+    # channel range which are affected
+    "dr_ch_idx" : {"dtype": "uint16"},
+    "dr_ch_len" : {"dtype": "uint16"},
     # waveform data
     "waveform": {
         "dtype": "uint16",
@@ -197,8 +200,12 @@ class FCEventDecoder(DataDecoder):
             tbl["dr_stop_ticks"].nda[ii] = fcio.event.deadregion[3]
             tbl["dr_maxticks"].nda[ii] = fcio.event.deadregion[4]
             # the dead-time affected channels
-            tbl["dr_ch_idx"].nda[ii] = fcio.event.deadregion[5]
-            tbl["dr_ch_len"].nda[ii] = fcio.event.deadregion[6]
+            if fcio.event.deadregion_size == 7:
+                tbl["dr_ch_idx"].nda[ii] = fcio.event.deadregion[5]
+                tbl["dr_ch_len"].nda[ii] = fcio.event.deadregion[6]
+            else:
+                tbl["dr_ch_idx"].nda[ii] = 0
+                tbl["dr_ch_len"].nda[ii] = fcio.config.adcs
 
             # The following values are derived values by fcio-py
             # the time since epoch in seconds

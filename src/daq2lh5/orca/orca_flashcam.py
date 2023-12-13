@@ -686,9 +686,12 @@ class ORFlashCamWaveformDecoder(OrcaDecoder):
         tbl["dr_stop_pps"].nda[ii] = int_packet[offset + 2]
         tbl["dr_stop_ticks"].nda[ii] = int_packet[offset + 3]
         tbl["dr_maxticks"].nda[ii] = int_packet[offset + 4]
+        # no deadregion_size available
+        # tbl["dr_ch_idx"].nda[ii] = int_packet[offset + 5]
+        # tbl["dr_ch_len"].nda[ii] = int_packet[offset + 6]
         dr_dpps = np.float64(int_packet[offset + 2] - int_packet[offset])
         dr_dticks = np.float64(int_packet[offset + 3] - int_packet[offset + 1])
-        tbl["deadtime"].nda[ii] = dr_dpps + dr_dticks / np.float64(
+        tbl["deadtime_nsec"].nda[ii] = dr_dpps + dr_dticks / np.float64(
             int_packet[offset + 4]
         )
 

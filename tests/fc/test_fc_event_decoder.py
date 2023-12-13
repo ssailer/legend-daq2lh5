@@ -74,7 +74,7 @@ def test_data_types(event_rbkd):
 
 def test_values(event_rbkd, fcio_obj):
     fc = fcio_obj
-    for ch in fc.event.trace_list:
+    for ii, ch in enumerate(fc.event.trace_list):
         loc = event_rbkd[ch].loc - 1
         tbl = event_rbkd[ch].lgdo
 
@@ -111,7 +111,13 @@ def test_values(event_rbkd, fcio_obj):
         assert tbl["dr_stop_pps"].nda[loc] == fc.event.deadregion[2]
         assert tbl["dr_stop_ticks"].nda[loc] == fc.event.deadregion[3]
         assert tbl["dr_maxticks"].nda[loc] == fc.event.deadregion[4]
-        assert tbl["deadtime"].nda[loc] == fc.event.dead_time_nsec / 1e9
+        if fc.event.deadregion_size == 7:
+            assert tbl["dr_ch_idx"].nda[loc] == fc.event.deadregion[5]
+            assert tbl["dr_ch_len"].nda[loc] == fc.event.deadregion[6]
+        else:
+            assert tbl["dr_ch_idx"].nda[loc] == 0
+            assert tbl["dr_ch_len"].nda[loc] == fc.config.adcs
+        assert tbl["deadtime_nsec"].nda[loc] == fc.event.dead_time_ns[ii]
         assert tbl["waveform"]["t0"].nda[loc] == 0
         assert tbl["waveform"]["dt"].nda[loc] == 16
         assert np.array_equal(tbl["waveform"]["values"].nda[loc], fc.event.trace[ch])

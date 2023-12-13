@@ -23,19 +23,6 @@ class FCStatusDecoder(DataDecoder):
             "cards": {"dtype": "int32"},
             # Size of each status data
             "size": {"dtype": "int32"},
-            # FC card-wise environment status
-            "environment": {
-                # Array contents:
-                # [0-4] Temps in mDeg
-                # [5-10] Voltages in mV
-                # 11 main current in mA
-                # 12 humidity in o/oo
-                # [13-14] Temps from adc cards in mDeg
-                # FIXME: change to a table?
-                "dtype": "uint32",
-                "datatype": "array_of_equalsized_arrays<1,1>{real}",
-                "length": 16,
-            },
             # FC card-wise list DAQ errors during data taking
             "totalerrors": {"dtype": "uint32"},
             "enverrors": {"dtype": "uint32"},
@@ -45,6 +32,32 @@ class FCStatusDecoder(DataDecoder):
                 "dtype": "uint32",
                 "datatype": "array_of_equalsized_arrays<1,1>{real}",
                 "length": 5,
+            },
+            # FC card-wise environment status
+            "numenv": {"dtype": "uint32"},
+            "numctilinks": {"dtype": "uint32"},
+            "numlinks": {"dtype": "uint32"},
+            "environment": {
+                # Array contents:
+                # [0-4] Temps in mDeg
+                # [5-10] Voltages in mV
+                # 11 main current in mA
+                # 12 humidity in o/oo
+                # [13-14] Temps from adc cards in mDeg
+                # FIXME: change to a table?
+                "dtype": "int32",
+                "datatype": "array_of_equalsized_arrays<1,1>{real}",
+                "length": 16,
+            },
+            "linkstates": {
+                "dtype": "uint32",
+                "datatype": "array_of_equalsized_arrays<1,1>{real}",
+                "length": 256,
+            },
+            "ctlinks": {
+                "dtype": "uint32",
+                "datatype": "array_of_equalsized_arrays<1,1>{real}",
+                "length": 4,
             },
         }
         """Default FlashCam status decoded values.
