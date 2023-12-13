@@ -65,7 +65,7 @@ def test_data_types(event_rbkd):
         assert isinstance(tbl["dr_stop_pps"], lgdo.Array)
         assert isinstance(tbl["dr_stop_ticks"], lgdo.Array)
         assert isinstance(tbl["dr_maxticks"], lgdo.Array)
-        assert isinstance(tbl["deadtime"], lgdo.Array)
+        assert isinstance(tbl["deadtime_nsec"], lgdo.Array)
         assert isinstance(tbl["waveform"], lgdo.Struct)
         assert isinstance(tbl["waveform"]["t0"], lgdo.Array)
         assert isinstance(tbl["waveform"]["dt"], lgdo.Array)

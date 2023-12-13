@@ -15,12 +15,13 @@ def status_rb(fcio_obj):
     rb = RawBuffer(lgdo=decoder.make_lgdo(size=1))
 
     # just get the first status record in the file and exit
-    while True:
-        pid = fcio_obj.get_record()
-        assert pid is True  # make sure there is at least one status record in the file
-        if fcio_obj == FCIOTag.Status:
-            decoder.decode_packet(fcio=fcio_obj, status_rb=rb, packet_id=420)
-            break
+    # while True:
+    #     pid = fcio_obj.get_record()
+    #     assert pid is True  # make sure there is at least one status record in the file
+    for status in fcio_obj.statuses:
+        # if fcio_obj == FCIOTag.Status:
+        decoder.decode_packet(fcio=fcio_obj, status_rb=rb, packet_id=420)
+        break
 
     return rb
 

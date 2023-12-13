@@ -174,23 +174,13 @@ class FCEventDecoder(DataDecoder):
             # fill the table
             tbl["channel"].nda[ii] = iwf
             tbl["packet_id"].nda[ii] = packet_id
-            tbl["eventnumber"].nda[
-                ii
-            ] = fcio.event.eventnumber  # the eventnumber since the beginning of the file
-            tbl["timestamp"].nda[ii] = fcio.event.utc_unix  # the time since epoch in seconds
-            tbl["runtime"].nda[
-                ii
-            ] = fcio.event.run_time  # the time since the beginning of the file in seconds
-            tbl["numtraces"].nda[ii] = fcio.event.num_traces  # number of triggered adcs
+              # the eventnumber since the beginning of the file
+            tbl["eventnumber"].nda[ii] = fcio.event.timestamp[0]
+            # number of triggered adcs
+            tbl["numtraces"].nda[ii] = fcio.event.num_traces
             tbl["tracelist"]._set_vector_unsafe(
                 ii, fcio.event.trace_list
             )  # list of triggered adcs
-            tbl["baseline"].nda[ii] = fcio.event.fpga_baseline[
-                iwf
-            ]  # the fpga baseline values for each channel in LSB
-            tbl["daqenergy"].nda[ii] = fcio.event.fpga_energy[
-                iwf
-            ]  # the fpga energy values for each channel in LSB
             tbl["ts_pps"].nda[ii] = fcio.event.timestamp[1]
             tbl["ts_ticks"].nda[ii] = fcio.event.timestamp[2]
             tbl["ts_maxticks"].nda[ii] = fcio.event.timestamp[3]
@@ -206,9 +196,20 @@ class FCEventDecoder(DataDecoder):
             tbl["dr_stop_pps"].nda[ii] = fcio.event.deadregion[2]
             tbl["dr_stop_ticks"].nda[ii] = fcio.event.deadregion[3]
             tbl["dr_maxticks"].nda[ii] = fcio.event.deadregion[4]
-            # TODO: add calculation per channel to fcio-py
-            tbl["deadtime"].nda[ii] = fcio.event.dead_time_nsec / 1e9
+            # the dead-time affected channels
+            tbl["dr_ch_idx"].nda[ii] = fcio.event.deadregion[5]
+            tbl["dr_ch_len"].nda[ii] = fcio.event.deadregion[6]
 
+            # The following values are derived values by fcio-py
+            # the time since epoch in seconds
+            tbl["timestamp"].nda[ii] = fcio.event.utc_unix
+            tbl["deadtime_nsec"].nda[ii] = fcio.event.dead_time_ns[iwf]
+            # the time since the beginning of the file in seconds
+            tbl["runtime"].nda[ii] = fcio.event.run_time
+            # the fpga baseline values for each channel in LSB
+            tbl["baseline"].nda[ii] = fcio.event.fpga_baseline[iwf]
+            # the fpga energy values for each channel in LSB
+            tbl["daqenergy"].nda[ii] = fcio.event.fpga_energy[iwf]
 
             # if len(traces[iwf]) != fcio.nsamples: # number of sample per trace check
             tbl["waveform"]["values"].nda[ii][:] = fcio.event.trace[idx]
