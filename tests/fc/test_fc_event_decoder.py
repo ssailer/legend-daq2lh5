@@ -24,7 +24,7 @@ def event_rbkd(fcio_obj, fcio_config):
     # decode packet into the lgdo's and check if the buffer is full
     assert decoder.decode_packet(fcio=fcio_obj, evt_rbkd=rbkd, packet_id=69) is True
 
-    # # check compression settings (here before any LH5Store.write_object() call
+    # # check compression settings (here before any LH5Store.write() call
     # assert "compression" in rbkd[0].lgdo["packet_id"].attrs
     # assert "compression" in rbkd[0].lgdo["waveform"].values.attrs
 

@@ -6,7 +6,7 @@ import os
 
 import h5py
 import lgdo
-from lgdo import LH5Store
+from lgdo import lh5
 
 from ..buffer_processor.buffer_processor import buffer_processor
 from ..raw_buffer import RawBuffer, RawBufferLibrary
@@ -54,14 +54,14 @@ def lh5_buffer_processor(
     """
 
     # Initialize the input raw file
-    raw_store = LH5Store()
+    raw_store = lh5.LH5Store()
     lh5_file = raw_store.gimme_file(lh5_raw_file_in, "r")
     if lh5_file is None:
         raise ValueError(f"input file not found: {lh5_raw_file_in}")
         return
 
     # List the groups in the raw file
-    lh5_groups = lgdo.ls(lh5_raw_file_in)
+    lh5_groups = lh5.ls(lh5_raw_file_in)
     lh5_tables = []
 
     # check if group points to raw data; sometimes 'raw' is nested, e.g g024/raw
@@ -69,21 +69,19 @@ def lh5_buffer_processor(
         # Make sure that the upper level key isn't a dataset
         if isinstance(lh5_file[tb], h5py.Dataset):
             lh5_tables.append(f"{tb}")
-        elif "raw" not in tb and lgdo.ls(lh5_file, f"{tb}/raw"):
+        elif "raw" not in tb and lh5.ls(lh5_file, f"{tb}/raw"):
             lh5_tables.append(f"{tb}/raw")
         # Look one layer deeper for a :meth:`lgdo.Table` if necessary
-        elif lgdo.ls(lh5_file, f"{tb}"):
+        elif lh5.ls(lh5_file, f"{tb}"):
             # Check to make sure that this isn't a table itself
-            maybe_table, _ = raw_store.read_object(f"{tb}", lh5_file)
+            maybe_table, _ = raw_store.read(f"{tb}", lh5_file)
             if isinstance(maybe_table, lgdo.Table):
                 lh5_tables.append(f"{tb}")
                 del maybe_table
             # otherwise, go deeper
             else:
-                for sub_table in lgdo.ls(lh5_file, f"{tb}"):
-                    maybe_table, _ = raw_store.read_object(
-                        f"{tb}/{sub_table}", lh5_file
-                    )
+                for sub_table in lh5.ls(lh5_file, f"{tb}"):
+                    maybe_table, _ = raw_store.read(f"{tb}/{sub_table}", lh5_file)
                     if isinstance(maybe_table, lgdo.Table):
                         lh5_tables.append(f"{tb}/{sub_table}")
                     del maybe_table
@@ -114,7 +112,7 @@ def lh5_buffer_processor(
 
     # Write everything in the raw file to the new file, check for proc_spec under either the group name, out_name, or the name
     for tb in lh5_tables:
-        lgdo_obj, _ = raw_store.read_object(f"{tb}", lh5_file)
+        lgdo_obj, _ = raw_store.read(f"{tb}", lh5_file)
 
         # Find the out_name.
         # If the top level group has an lgdo table in it, then the out_name is group
@@ -198,6 +196,4 @@ def lh5_buffer_processor(
                 pass
 
         # Write the (possibly processed) lgdo_obj to a file
-        raw_store.write_object(
-            lgdo_obj, out_name, lh5_file=proc_file_name, group=group_name
-        )
+        raw_store.write(lgdo_obj, out_name, lh5_file=proc_file_name, group=group_name)

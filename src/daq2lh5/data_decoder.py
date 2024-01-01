@@ -3,13 +3,10 @@ Base classes for decoding data into raw LGDO Tables or files
 """
 from __future__ import annotations
 
-from typing import Union
-
 import lgdo
 import numpy as np
-from lgdo import LH5Store
-
-LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]
+from lgdo import LGDO
+from lgdo.lh5 import LH5Store
 
 
 class DataDecoder:
@@ -18,15 +15,16 @@ class DataDecoder:
     Most decoders will repeatedly decode the same set of values from each
     packet.  The values that get decoded need to be described by a dict stored
     in `self.decoded_values` that helps determine how to set up the buffers and
-    write them to file as :class:`~.lgdo.LGDO`\ s. :class:`~.lgdo.table.Table`\ s
-    are made whose columns correspond to the elements of `decoded_values`, and
-    packet data gets pushed to the end of the table one row at a time.
+    write them to file as :class:`~.lgdo.types.lgdo.LGDO`\ s.
+    :class:`~.lgdo.types.table.Table`\ s are made whose columns correspond to
+    the elements of `decoded_values`, and packet data gets pushed to the end of
+    the table one row at a time.
 
     Any key-value entry in a configuration dictionary attached to an element
     of `decoded_values` is typically interpreted as an attribute to be attached
     to the corresponding LGDO. This feature can be for example exploited to
     specify HDF5 dataset settings used by
-    :meth:`~.lgdo.lh5_store.LH5Store.write_object` to write LGDOs to disk.
+    :meth:`~.lgdo.lh5.LH5Store.write` to write LGDOs to disk.
 
     For example ::
 
@@ -119,7 +117,7 @@ class DataDecoder:
         """Make an LGDO for this :class:`DataDecoder` to fill.
 
         This default version of this function allocates a
-        :class:`~.lgdo.table.Table` using the `decoded_values` for key. If a
+        :class:`~.lgdo.types.table.Table` using the `decoded_values` for key. If a
         different type of LGDO object is required for this decoder, overload
         this function.
 
@@ -207,7 +205,7 @@ class DataDecoder:
                 continue
 
             # Parse datatype for remaining lgdos
-            datatype, shape, elements = lgdo.lgdo_utils.parse_datatype(datatype)
+            datatype, shape, elements = lgdo.lh5.utils.parse_datatype(datatype)
 
             # ArrayOfEqualSizedArrays
             if datatype == "array_of_equalsized_arrays":
@@ -258,7 +256,7 @@ class DataDecoder:
         n_rows = self.garbage_table.loc
         if n_rows == 0:
             return
-        lh5_store.write_object(
+        lh5_store.write(
             self.garbage_table, "garbage", filename, group, n_rows=n_rows, append=True
         )
         self.garbage_table.clear()
