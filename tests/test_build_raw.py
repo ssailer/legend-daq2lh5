@@ -4,8 +4,8 @@ from pathlib import Path
 
 import h5py
 import pytest
+from lgdo import lh5
 from lgdo.compression import ULEB128ZigZagDiff
-from lgdo.lh5_store import LH5Store, ls
 
 from daq2lh5 import build_raw
 from daq2lh5.fc.fc_event_decoder import fc_decoded_values
@@ -86,8 +86,8 @@ def test_build_raw_fc_out_spec(lgnd_test_data, tmptestdir):
         overwrite=True,
     )
 
-    store = LH5Store()
-    lh5_obj, n_rows = store.read_object("/spms", out_file)
+    store = lh5.LH5Store()
+    lh5_obj, n_rows = store.read("/spms", out_file)
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [2, 3, 4, 2, 3, 4, 2, 3, 4, 2]).all()
 
@@ -124,9 +124,9 @@ def test_build_raw_fc_channelwise_out_spec(lgnd_test_data, tmptestdir):
         overwrite=True,
     )
 
-    assert ls(out_file) == ["ch0", "ch1", "ch2", "ch3", "ch4", "ch5"]
-    assert ls(out_file, "ch0/") == ["ch0/raw"]
-    assert ls(out_file, "ch0/raw/waveform") == ["ch0/raw/waveform"]
+    assert lh5.ls(out_file) == ["ch0", "ch1", "ch2", "ch3", "ch4", "ch5"]
+    assert lh5.ls(out_file, "ch0/") == ["ch0/raw"]
+    assert lh5.ls(out_file, "ch0/raw/waveform") == ["ch0/raw/waveform"]
 
 
 def test_build_raw_orca(lgnd_test_data, tmptestdir):
@@ -163,8 +163,8 @@ def test_build_raw_orca_out_spec(lgnd_test_data, tmptestdir):
         overwrite=True,
     )
 
-    store = LH5Store()
-    lh5_obj, n_rows = store.read_object("/geds", out_file)
+    store = lh5.LH5Store()
+    lh5_obj, n_rows = store.read("/geds", out_file)
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [2, 3, 4, 2, 3, 4, 2, 3, 4, 2]).all()
 
@@ -258,8 +258,8 @@ def test_build_raw_wf_compression_in_decoded_values(lgnd_test_data, tmptestdir):
         assert f["ORFlashCamADCWaveform/waveform/t0"].shuffle is True
         assert f["ORFlashCamADCWaveform/waveform/t0"].compression is None
 
-    store = LH5Store()
-    obj, _ = store.read_object(
+    store = lh5.LH5Store()
+    obj, _ = store.read(
         "ORFlashCamADCWaveform/waveform/values", out_file, decompress=False
     )
     assert obj.attrs["codec"] == "uleb128_zigzag_diff"
@@ -306,8 +306,8 @@ def test_build_raw_compass_out_spec(lgnd_test_data, tmptestdir):
         ),
     )
 
-    store = LH5Store()
-    lh5_obj, n_rows = store.read_object("/spms", out_file)
+    store = lh5.LH5Store()
+    lh5_obj, n_rows = store.read("/spms", out_file)
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]).all()
 
@@ -325,8 +325,8 @@ def test_build_raw_compass_out_spec_no_config(lgnd_test_data, tmptestdir):
         overwrite=True,
     )
 
-    store = LH5Store()
-    lh5_obj, n_rows = store.read_object("/spms", out_file)
+    store = lh5.LH5Store()
+    lh5_obj, n_rows = store.read("/spms", out_file)
     assert n_rows == 10
     assert (lh5_obj["channel"].nda == [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]).all()
 

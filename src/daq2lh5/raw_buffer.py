@@ -65,21 +65,19 @@ keys.
 from __future__ import annotations
 
 import os
-from typing import Union
 
 import lgdo
-from lgdo import LH5Store
+from lgdo import LGDO
+from lgdo.lh5 import LH5Store
 
 from .buffer_processor.buffer_processor import buffer_processor
-
-LGDO = Union[lgdo.Scalar, lgdo.Struct, lgdo.Array, lgdo.VectorOfVectors]
 
 
 class RawBuffer:
     r"""Base class to represent a buffer of raw data.
 
     A :class:`RawBuffer` is in essence a an LGDO object (typically a
-    :class:`~.lgdo.table.Table`) to which decoded data will be written, along
+    :class:`~.lgdo.types.table.Table`) to which decoded data will be written, along
     with some meta-data distinguishing what data goes into it, and where the
     LGDO gets written out. Also holds on to the current location in the buffer
     for writing.
@@ -88,7 +86,7 @@ class RawBuffer:
     ----------
     lgdo
         the LGDO used as the actual buffer. Typically a
-        :class:`~.lgdo.table.Table`. Set to ``None`` upon creation so that the
+        :class:`~.lgdo.types.table.Table`. Set to ``None`` upon creation so that the
         user or a decoder can initialize it later.
     key_list
         a list of keys (e.g. channel numbers) identifying data to be written
@@ -107,7 +105,7 @@ class RawBuffer:
     proc_spec
         a dictionary containing the following:
         - a DSP config file, passed as a dictionary, or as a path to a JSON file
-        - an array containing: the name of an :class:`~.lgdo` object stored in the :class:`.RawBuffer` to be sliced,
+        - an array containing: the name of an LGDO object stored in the :class:`.RawBuffer` to be sliced,
         the start and end indices of the slice, and the new name for the sliced object
         - a dictionary of fields to drop
         - a dictionary of new fields and their return datatype
@@ -440,11 +438,11 @@ def write_to_lh5_and_clear(
         files (saves some time opening / closing files).
     **kwargs
         keyword-arguments forwarded to
-        :meth:`.lgdo.lh5_store.LH5Store.write_object`.
+        :meth:`.lgdo.lh5.LH5Store.write`.
 
     See Also
     --------
-    .lgdo.lh5_store.LH5Store.write_object
+    .lgdo.lh5.LH5Store.write
     """
     if lh5_store is None:
         lh5_store = lgdo.LH5Store()
@@ -470,7 +468,7 @@ def write_to_lh5_and_clear(
 
         # write if requested...
         if filename != "":
-            lh5_store.write_object(
+            lh5_store.write(
                 lgdo_to_write,
                 rb.out_name,
                 filename,

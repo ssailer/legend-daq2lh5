@@ -6,8 +6,8 @@ import logging
 import os
 import time
 
-import lgdo
 import numpy as np
+from lgdo import lh5
 from tqdm.auto import tqdm
 
 from .compass.compass_streamer import CompassStreamer
@@ -77,7 +77,7 @@ def build_raw(
 
     hdf5_settings
         keyword arguments (as a dict) forwarded to
-        :meth:`~.lgdo.lh5_store.LH5Store.write_object`.
+        :meth:`~.lgdo.lh5.LH5Store.write`.
 
     **kwargs
         sent to :class:`.RawBufferLibrary` generation as `kw_dict` argument.
@@ -224,7 +224,7 @@ def build_raw(
         os.remove(out_file_glob[0])
 
     # Write header data
-    lh5_store = lgdo.LH5Store(keep_open=True)
+    lh5_store = lh5.LH5Store(keep_open=True)
     write_to_lh5_and_clear(header_data, lh5_store, **hdf5_settings)
 
     # Now loop through the data

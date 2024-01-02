@@ -28,7 +28,7 @@ class FCConfigDecoder(DataDecoder):
     >>> decoder = FCConfigDecoder()
     >>> config = decoder.decode_config(fc)
     >>> type(config)
-    lgdo.struct.Struct
+    lgdo.types.struct.Struct
     """
 
     def __init__(self, *args, **kwargs) -> None:
