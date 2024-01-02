@@ -1047,24 +1047,12 @@ def test_buffer_processor_all_pass(lgnd_test_data):
     for tb in raw_tables:
         raw, _ = sto.read(tb, raw_file)
         proc, _ = sto.read(tb, processed_file)
-        if isinstance(raw, lgdo.Scalar):
-            raw_value = raw.value
-            raw_attrs = raw.attrs
-            proc_value = proc.value
-            proc_attrs = proc.attrs
-            assert raw_value == proc_value
-            assert raw_attrs == proc_attrs
-        else:
-            for obj in raw.keys():
-                if not isinstance(raw[obj], lgdo.Table):
-                    raw_df = raw.view_as("pd", cols=[obj])
-                    proc_df = proc.view_as("pd", cols=[obj])
-                else:
-                    for sub_obj in raw[obj].keys():
-                        raw_df = raw[obj].view_as("pd", cols=[str(sub_obj)])
-                        proc_df = proc[obj].view_as("pd", cols=[str(sub_obj)])
 
-            assert raw_df.equals(proc_df)
+        if isinstance(raw, lgdo.Struct):
+            for obj in raw:
+                assert raw[obj] == raw[obj]
+        else:
+            assert raw == proc
 
 
 def test_lh5_buffer_processor_hdf5_settings(lgnd_test_data):
