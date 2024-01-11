@@ -77,7 +77,7 @@ def build_raw(
 
     hdf5_settings
         keyword arguments (as a dict) forwarded to
-        :meth:`~.lgdo.lh5.LH5Store.write`.
+        :meth:`lgdo.lh5.store.LH5Store.write`.
 
     **kwargs
         sent to :class:`.RawBufferLibrary` generation as `kw_dict` argument.

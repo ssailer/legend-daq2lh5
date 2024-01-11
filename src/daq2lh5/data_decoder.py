@@ -15,8 +15,8 @@ class DataDecoder:
     Most decoders will repeatedly decode the same set of values from each
     packet.  The values that get decoded need to be described by a dict stored
     in `self.decoded_values` that helps determine how to set up the buffers and
-    write them to file as :class:`~.lgdo.types.lgdo.LGDO`\ s.
-    :class:`~.lgdo.types.table.Table`\ s are made whose columns correspond to
+    write them to file as :class:`~lgdo.types.lgdo.LGDO`\ s.
+    :class:`~lgdo.types.table.Table`\ s are made whose columns correspond to
     the elements of `decoded_values`, and packet data gets pushed to the end of
     the table one row at a time.
 
@@ -24,7 +24,7 @@ class DataDecoder:
     of `decoded_values` is typically interpreted as an attribute to be attached
     to the corresponding LGDO. This feature can be for example exploited to
     specify HDF5 dataset settings used by
-    :meth:`~.lgdo.lh5.LH5Store.write` to write LGDOs to disk.
+    :meth:`~lgdo.lh5.store.LH5Store.write` to write LGDOs to disk.
 
     For example ::
 
@@ -47,7 +47,7 @@ class DataDecoder:
     will have its `compression` attribute set to
     ``RadwareSigcompress(codec_shift=-32768)``.  Before being written to disk,
     they will be compressed with the HDF5 built-in Gzip filter and with the
-    :class:`~.lgdo.compression.radware.RadwareSigcompress` waveform compressor.
+    :class:`~lgdo.compression.radware.RadwareSigcompress` waveform compressor.
 
     Examples
     --------
@@ -117,7 +117,7 @@ class DataDecoder:
         """Make an LGDO for this :class:`DataDecoder` to fill.
 
         This default version of this function allocates a
-        :class:`~.lgdo.types.table.Table` using the `decoded_values` for key. If a
+        :class:`~lgdo.types.table.Table` using the `decoded_values` for key. If a
         different type of LGDO object is required for this decoder, overload
         this function.
 

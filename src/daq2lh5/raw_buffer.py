@@ -77,7 +77,7 @@ class RawBuffer:
     r"""Base class to represent a buffer of raw data.
 
     A :class:`RawBuffer` is in essence a an LGDO object (typically a
-    :class:`~.lgdo.types.table.Table`) to which decoded data will be written, along
+    :class:`~lgdo.types.table.Table`) to which decoded data will be written, along
     with some meta-data distinguishing what data goes into it, and where the
     LGDO gets written out. Also holds on to the current location in the buffer
     for writing.
@@ -86,7 +86,7 @@ class RawBuffer:
     ----------
     lgdo
         the LGDO used as the actual buffer. Typically a
-        :class:`~.lgdo.types.table.Table`. Set to ``None`` upon creation so that the
+        :class:`~lgdo.types.table.Table`. Set to ``None`` upon creation so that the
         user or a decoder can initialize it later.
     key_list
         a list of keys (e.g. channel numbers) identifying data to be written
@@ -438,11 +438,11 @@ def write_to_lh5_and_clear(
         files (saves some time opening / closing files).
     **kwargs
         keyword-arguments forwarded to
-        :meth:`.lgdo.lh5.LH5Store.write`.
+        :meth:`lgdo.lh5.store.LH5Store.write`.
 
     See Also
     --------
-    .lgdo.lh5.LH5Store.write
+    lgdo.lh5.store.LH5Store.write
     """
     if lh5_store is None:
         lh5_store = lgdo.LH5Store()
