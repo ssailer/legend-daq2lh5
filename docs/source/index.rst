@@ -41,3 +41,21 @@ Next steps
 
    manuals/index
    Package API reference <api/modules>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Related projects
+
+   LEGEND Data Objects <https://legend-pydataobj.readthedocs.io>
+   Digital Signal Processing <https://dspeed.readthedocs.io>
+   pygama <https://pygama.readthedocs.io>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Development
+
+   Source Code <https://github.com/legend-exp/legend-daq2lh5>
+   License <https://github.com/legend-exp/legend-daq2lh5/blob/main/LICENSE>
+   Citation <https://doi.org/10.5281/zenodo.10721223>
+   Changelog <https://github.com/legend-exp/legend-daq2lh5/releases>
+   developer
