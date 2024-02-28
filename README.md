@@ -10,6 +10,7 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/legend-exp/legend-daq2lh5?logo=github)
 ![License](https://img.shields.io/github/license/legend-exp/legend-daq2lh5)
 [![Read the Docs](https://img.shields.io/readthedocs/legend-daq2lh5?logo=readthedocs)](https://legend-daq2lh5.readthedocs.io)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10721223.svg)](https://doi.org/10.5281/zenodo.10721223)
 
 JSON-configurable conversion of digitized data into
 [LEGEND HDF5](https://legend-exp.github.io/legend-data-format-specs/dev/hdf5/),
@@ -23,3 +24,6 @@ Currently supported DAQ data formats:
   - FlashCam
   - [Struck SIS3302](https://www.struck.de/sis3302.htm)
   - [Struck SIS3316](https://www.struck.de/sis3316.html)
+
+If you are using this software, consider
+[citing](https://doi.org/10.5281/zenodo.10721223)!
