@@ -1,6 +1,7 @@
 """
 Base classes for decoding data into raw LGDO Tables or files
 """
+
 from __future__ import annotations
 
 import lgdo
