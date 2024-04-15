@@ -1,4 +1,5 @@
 """legend-daq2lh5's command line interface utilities."""
+
 from __future__ import annotations
 
 import argparse

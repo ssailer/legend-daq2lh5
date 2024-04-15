@@ -421,13 +421,13 @@ class ORFlashCamListenerStatusDecoder(OrcaDecoder):
                     (fd0 + i_card) * 5 + j
                 ] = packet[i_cd + 14 + j]
             for j in range(5):
-                tbl["card_temps"].flattened_data.nda[
-                    (fd0 + i_card) * 5 + j
-                ] = int_packet[i_cd + 19 + j]
+                tbl["card_temps"].flattened_data.nda[(fd0 + i_card) * 5 + j] = (
+                    int_packet[i_cd + 19 + j]
+                )
             for j in range(6):
-                tbl["card_voltages"].flattened_data.nda[
-                    (fd0 + i_card) * 6 + j
-                ] = int_packet[i_cd + 24 + j]
+                tbl["card_voltages"].flattened_data.nda[(fd0 + i_card) * 6 + j] = (
+                    int_packet[i_cd + 24 + j]
+                )
             tbl["card_main_current"].flattened_data.nda[fd0 + i_card] = int_packet[
                 i_cd + 30
             ]
@@ -435,14 +435,14 @@ class ORFlashCamListenerStatusDecoder(OrcaDecoder):
                 i_cd + 31
             ]
             for j in range(2):
-                tbl["card_adc_temps"].flattened_data.nda[
-                    (fd0 + i_card) * 2 + j
-                ] = int_packet[i_cd + 32 + j]
+                tbl["card_adc_temps"].flattened_data.nda[(fd0 + i_card) * 2 + j] = (
+                    int_packet[i_cd + 32 + j]
+                )
             # packet[34] is empty / dummy
             for j in range(4):
-                tbl["card_cti_links"].flattened_data.nda[
-                    (fd0 + i_card) * 4 + j
-                ] = packet[i_cd + 35 + j]
+                tbl["card_cti_links"].flattened_data.nda[(fd0 + i_card) * 4 + j] = (
+                    packet[i_cd + 35 + j]
+                )
             for j in range(256):
                 value = packet[i_cd + 39 + j] if j < n_link_states else 0
                 tbl["card_link_states"].flattened_data.nda[

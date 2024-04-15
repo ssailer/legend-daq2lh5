@@ -4,6 +4,7 @@ Provides convenience functions for working with ORCA packets.
 An ORCA packet is represented by a one-dimensional :class:`numpy.ndarray` of
 type :class:`numpy.uint32`.
 """
+
 from __future__ import annotations
 
 import logging
