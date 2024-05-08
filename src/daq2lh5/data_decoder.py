@@ -74,7 +74,7 @@ class DataDecoder:
     def __init__(
         self, garbage_length: int = 256, packet_size_guess: int = 1024
     ) -> None:
-        self.garbage_table = lgdo.Table(garbage_length)
+        self.garbage_table = lgdo.Table(size=garbage_length)
         shape_guess = (garbage_length, packet_size_guess)
         self.garbage_table.add_field(
             "packets", lgdo.VectorOfVectors(shape_guess=shape_guess, dtype="uint8")
